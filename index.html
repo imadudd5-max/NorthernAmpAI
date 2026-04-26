@@ -1,235 +1,618 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NorthernAmpAI Chat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthernAmpAI</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    :root {
+      color-scheme: light;
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+      background: #eef2f7;
+      color: #1f2937;
+      --surface: #ffffff;
+      --surface-soft: #f7f9fc;
+      --surface-muted: #f1f5f9;
+      --border: rgba(148, 163, 184, 0.3);
+      --shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
+      --primary: #2563eb;
+      --primary-soft: #e0ebff;
+      --text-strong: #111827;
+      --text-muted: #475569;
+      --accent: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.08), transparent 28%),
+        var(--surface);
+      color: var(--text-strong);
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+      gap: 24px;
       padding: 24px;
-      background: #f7f8fb;
-      color: #111827;
+      align-items: stretch;
     }
 
-    h1 {
-      margin-top: 0;
-    }
-
-    .chat-container {
-      border: 1px solid #d1d5db;
-      border-radius: 16px;
-      background: #ffffff;
-      padding: 18px;
-      min-height: 320px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      overflow-y: auto;
-    }
-
-    #chat {
+    .sidebar {
       display: flex;
       flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      min-height: calc(100vh - 48px);
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 12px;
     }
 
-    .message {
+    .brand h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text-strong);
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      border-radius: 22px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      color: var(--text-strong);
+    }
+
+    .project-list,
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .project-item,
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      color: var(--text-strong);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .project-item:hover,
+    .history-item:hover {
+      background: var(--surface-muted);
+      transform: translateY(-1px);
+    }
+
+    .project-item span,
+    .history-item span {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .new-chat-btn {
+      width: 100%;
       padding: 14px 18px;
       border-radius: 16px;
-      max-width: 82%;
-      line-height: 1.55;
-      word-break: break-word;
+      border: none;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.98rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .new-chat-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: calc(100vh - 48px);
+    }
+
+    .header-bar {
+      padding: 24px 28px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(247, 250, 252, 0.95);
+    }
+
+    .header-bar h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-bar p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    }
+
+    .message {
+      max-width: 85%;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+      border: 1px solid transparent;
+      position: relative;
+      overflow-wrap: anywhere;
+    }
+
+    .message.ai {
+      align-self: flex-start;
+      background: #f8fafc;
+      border-color: rgba(59, 130, 246, 0.12);
     }
 
     .message.user {
       align-self: flex-end;
-      background: #eff6ff;
-      color: #0f172a;
-    }
-
-    .message.assistant {
-      align-self: flex-start;
-      background: #f8fafc;
-      color: #0f172a;
+      background: #e0f2fe;
+      border-color: rgba(3, 105, 161, 0.18);
     }
 
     .message .label {
-      display: block;
+      display: inline-flex;
+      margin-bottom: 10px;
       font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 8px;
-      color: #334155;
     }
 
-    .controls {
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
+    .message.ai .label {
+      color: #2563eb;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 110px;
-      border: 1px solid #cbd5e1;
+    .message.user .label {
+      color: #0f172a;
+    }
+
+    .message .content {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--text-strong);
+    }
+
+    .message pre {
+      background: #0f172a;
       border-radius: 14px;
-      padding: 14px;
-      font-size: 1rem;
+      color: #f8fafc;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      font-size: 0.95rem;
+    }
+
+    .message table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+    }
+
+    .message table th,
+    .message table td {
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 0.96rem;
+    }
+
+    .message table th {
+      background: #eef2ff;
+      font-weight: 700;
+    }
+
+    .message blockquote {
+      margin: 16px 0;
+      padding: 14px 18px;
+      border-left: 4px solid rgba(37, 99, 235, 0.48);
+      background: #eff6ff;
+      color: #1e293b;
+    }
+
+    .footer-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      padding: 18px 24px;
+      background: rgba(247, 250, 252, 0.95);
+    }
+
+    .input-wrapper {
+      display: grid;
+      gap: 10px;
+    }
+
+    textarea#prompt {
+      width: 100%;
+      min-height: 120px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      padding: 16px;
       resize: vertical;
-      background: #ffffff;
-      color: #0f172a;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 18px;
       font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-strong);
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.06);
+      outline: none;
+    }
+
+    textarea#prompt:focus {
+      border-color: rgba(37, 99, 235, 0.45);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .send-button {
+      padding: 16px 24px;
+      border-radius: 18px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.18);
+      transition: transform 0.16s ease, background 0.16s ease;
+      align-self: stretch;
     }
 
-    button.primary {
-      background: #2563eb;
-      color: #ffffff;
+    .send-button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
     }
 
-    button.secondary {
-      background: #e2e8f0;
-      color: #0f172a;
+    .send-button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .meta {
-      margin-top: 14px;
-      font-size: 0.94rem;
-      color: #475569;
+    .status-line {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+      min-height: 20px;
+    }
+
+    .small-note {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 1080px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        padding: 16px;
+      }
+
+      .sidebar,
+      .chat-panel {
+        border-radius: 20px;
+      }
+
+      .header-bar,
+      .footer-bar,
+      .chat-window {
+        padding: 18px;
+      }
+
+      .footer-bar {
+        grid-template-columns: 1fr;
+      }
+
+      textarea#prompt {
+        min-height: 100px;
+      }
     }
   </style>
 </head>
-
 <body>
-  <h1>NorthernAmpAI Chat</h1>
-  <p>Ask an electrical engineering question and keep the conversation in a session history.</p>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div>
+          <h1>NorthernAmpAI</h1>
+          <p>Engineering AI workspace</p>
+        </div>
+        <button class="new-chat-btn" id="newChatBtn">+ New Chat</button>
+      </div>
 
-  <div class="chat-container">
-    <div id="chat"></div>
+      <section class="card">
+        <h2>Projects</h2>
+        <div class="project-list" id="projectList"></div>
+      </section>
+
+      <section class="card">
+        <h2>Chat History</h2>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </aside>
+
+    <main class="chat-panel">
+      <div class="header-bar">
+        <div>
+          <h1>NorthernAmpAI</h1>
+          <p>Professional electrical engineering assistant with markdown-rich answers.</p>
+        </div>
+      </div>
+
+      <section class="chat-window" id="chatWindow"></section>
+
+      <div class="footer-bar">
+        <div class="input-wrapper">
+          <textarea id="prompt" placeholder="Type your question here..." rows="4"></textarea>
+          <div class="status-line" id="statusLine">Press Enter to send, Shift + Enter for a new line.</div>
+        </div>
+        <button class="send-button" id="sendBtn">Send</button>
+      </div>
+    </main>
   </div>
-
-  <div class="controls">
-    <textarea id="question" placeholder="Type your question here...">What size transformer do I need for 25 MW?</textarea>
-    <div class="button-row">
-      <button class="primary" onclick="sendMessage()">Send</button>
-      <button class="secondary" onclick="clearSession()">Clear chat</button>
-    </div>
-  </div>
-
-  <p class="meta">Chat history is stored locally in your browser for this device.</p>
 
   <script>
     const API_URL = "https://oh4xf4eo5i.execute-api.us-east-1.amazonaws.com/prod/NorthernAmpAI";
-    const STORAGE_KEY = "NorthernAmpAI_chat_history";
-    let messages = [];
+    const STORAGE_KEY = "NorthernAmpAI_conversation";
+    const HISTORY_KEY = "NorthernAmpAI_history";
+    const projectItems = [
+      "General Engineering",
+      "Transformers",
+      "Protection & Control",
+      "SCADA",
+      "Power Studies",
+      "Reports"
+    ];
 
-    function createMessage(role, content) {
-      return { role, content, timestamp: new Date().toISOString() };
+    const sampleHistory = [
+      "Transformer sizing for 25 MW",
+      "ANSI transformer sizes",
+      "Grounding study assumptions",
+      "Relay settings review"
+    ];
+
+    const chatWindow = document.getElementById("chatWindow");
+    const promptInput = document.getElementById("prompt");
+    const sendBtn = document.getElementById("sendBtn");
+    const newChatBtn = document.getElementById("newChatBtn");
+    const statusLine = document.getElementById("statusLine");
+    const projectList = document.getElementById("projectList");
+    const historyList = document.getElementById("historyList");
+
+    let conversation = [];
+    let history = [];
+    let isThinking = false;
+
+    const createMessage = (role, text) => ({ role, text, timestamp: new Date().toISOString() });
+
+    function renderProjects() {
+      projectList.innerHTML = projectItems
+        .map((project) => `<div class="project-item"><span>${project}</span></div>`)
+        .join("");
     }
 
-    function renderChat() {
-      const chat = document.getElementById("chat");
-      chat.innerHTML = "";
-      messages.forEach(msg => {
-        const bubble = document.createElement("div");
-        bubble.className = `message ${msg.role}`;
-
-        const label = document.createElement("span");
-        label.className = "label";
-        label.textContent = msg.role === "user" ? "You" : "Assistant";
-
-        const content = document.createElement("div");
-        if (msg.role === "assistant") {
-          content.innerHTML = marked.parse(msg.content || "");
-        } else {
-          content.textContent = msg.content || "";
-        }
-
-        bubble.appendChild(label);
-        bubble.appendChild(content);
-        chat.appendChild(bubble);
-      });
-      chat.scrollTop = chat.scrollHeight;
+    function renderHistory() {
+      const combined = [...sampleHistory, ...history].slice(0, 10);
+      historyList.innerHTML = combined
+        .map((entry) => `
+          <div class="history-item"><span>${entry}</span></div>
+        `)
+        .join("");
     }
 
-    function saveSession() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    function renderConversation() {
+      chatWindow.innerHTML = conversation
+        .map((msg) => {
+          const label = msg.role === "assistant" ? "NorthernAmpAI" : "You";
+          const content = msg.role === "assistant" ? marked.parse(msg.text) : `<div>${escapeHtml(msg.text).replace(/\n/g, "<br />")}</div>`;
+          return `
+            <article class="message ${msg.role}">
+              <span class="label">${label}</span>
+              <div class="content">${content}</div>
+            </article>
+          `;
+        })
+        .join("");
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function saveConversation() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation));
+    }
+
+    function saveHistory(item) {
+      if (!item || history.includes(item) || sampleHistory.includes(item)) return;
+      history.unshift(item);
+      if (history.length > 10) history.length = 10;
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      renderHistory();
     }
 
     function loadSession() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const storedHistory = localStorage.getItem(HISTORY_KEY);
+      if (storedHistory) {
         try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            messages = parsed;
-          }
+          history = JSON.parse(storedHistory);
         } catch (error) {
-          console.warn("Unable to restore chat history:", error);
+          history = [];
         }
       }
-      if (messages.length === 0) {
-        messages = [createMessage("assistant", "Welcome! Ask me anything about electrical engineering.")];
-      }
-      renderChat();
-    }
-
-    function appendMessage(role, content) {
-      messages.push(createMessage(role, content));
-      saveSession();
-      renderChat();
-    }
-
-    async function sendMessage() {
-      const textarea = document.getElementById("question");
-      const question = textarea.value.trim();
-      if (!question) {
-        return;
+      if (stored) {
+        try {
+          conversation = JSON.parse(stored);
+        } catch (error) {
+          conversation = [];
+        }
       }
 
+      if (!conversation || conversation.length === 0) {
+        conversation = [
+          createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")
+        ];
+      }
+      renderConversation();
+      renderProjects();
+      renderHistory();
+    }
+
+    function updateStatus(text) {
+      statusLine.textContent = text;
+    }
+
+    async function sendQuestion() {
+      if (isThinking) return;
+      const question = promptInput.value.trim();
+      if (!question) return;
+
+      isThinking = true;
+      promptInput.value = "";
+      updateStatus("Sending question...");
       appendMessage("user", question);
-      textarea.value = "";
       appendMessage("assistant", "Thinking...");
 
       try {
         const response = await fetch(API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({ question })
         });
 
-        const data = await response.json();
-        let body = data;
-        if (data.body) {
-          body = JSON.parse(data.body);
+        const payload = await response.json();
+        let body = payload;
+        if (payload.body) {
+          try {
+            body = JSON.parse(payload.body);
+          } catch (_) {
+            body = payload.body;
+          }
         }
 
-        const answer = body.answer || body.message || body.error || JSON.stringify(body, null, 2);
-        messages.pop();
-        appendMessage("assistant", answer);
+        const answer = body.answer || body.message || "No answer returned from the API.";
+        replaceLastAssistantMessage(answer);
+        saveConversation();
+        saveHistory(question);
+        updateStatus("Answer received. Press Enter to ask the next question.");
       } catch (error) {
-        messages.pop();
-        appendMessage("assistant", "Frontend error: " + error.message);
+        replaceLastAssistantMessage(`Error: ${error.message}`);
+        updateStatus("Unable to connect to the API. Check your network or endpoint.");
+      } finally {
+        isThinking = false;
       }
     }
 
-    function clearSession() {
-      localStorage.removeItem(STORAGE_KEY);
-      messages = [createMessage("assistant", "Chat cleared. Ask another question to start a new session.")];
-      renderChat();
+    function appendMessage(role, text) {
+      conversation.push(createMessage(role, text));
+      saveConversation();
+      renderConversation();
     }
+
+    function replaceLastAssistantMessage(text) {
+      for (let i = conversation.length - 1; i >= 0; i--) {
+        if (conversation[i].role === "assistant") {
+          conversation[i].text = text;
+          break;
+        }
+      }
+      renderConversation();
+      saveConversation();
+    }
+
+    function startNewChat() {
+      conversation = [
+        createMessage("assistant", "New session started. How can NorthernAmpAI support your engineering task?")
+      ];
+      saveConversation();
+      renderConversation();
+      updateStatus("New chat created. Enter your question below.");
+    }
+
+    sendBtn.addEventListener("click", sendQuestion);
+    newChatBtn.addEventListener("click", startNewChat);
+
+    promptInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendQuestion();
+      }
+    });
 
     loadSession();
   </script>
