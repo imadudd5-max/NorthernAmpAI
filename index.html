@@ -3,211 +3,403 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NorthernAmpAI</title>
+  <title>NorthernAmpAI - Professional Engineering Assistant</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    /* ============================================================================
+       DESIGN SYSTEM & CSS VARIABLES
+       ============================================================================
+       This section defines the entire color palette, spacing system, and design
+       tokens. These variables are used throughout the application and make it
+       easy to maintain a consistent design system.
+    */
     :root {
       color-scheme: light;
-      /* Light mode colors */
-      --bg-primary: #ffffff;
-      --bg-secondary: #f7f7f7;
-      --bg-tertiary: #ececf1;
+
+      /* Primary Color Palette - Professional Green */
+      --primary-50: #f0fdf4;
+      --primary-100: #dcfce7;
+      --primary-200: #bbf7d0;
+      --primary-300: #86efac;
+      --primary-400: #4ade80;
+      --primary-500: #22c55e;
+      --primary-600: #16a34a;
+      --primary-700: #15803d;
+      --primary-800: #166534;
+      --primary-900: #145231;
+
+      /* Neutral Color Palette - Grays */
+      --neutral-0: #ffffff;
+      --neutral-50: #f9fafb;
+      --neutral-100: #f3f4f6;
+      --neutral-150: #ececf1;
+      --neutral-200: #e5e7eb;
+      --neutral-300: #d1d5db;
+      --neutral-400: #9ca3af;
+      --neutral-500: #6b7280;
+      --neutral-600: #4b5563;
+      --neutral-700: #374151;
+      --neutral-800: #1f2937;
+      --neutral-900: #111827;
+      --neutral-950: #030712;
+
+      /* Semantic Colors */
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #3b82f6;
+
+      /* Surface Colors */
+      --surface-primary: #ffffff;
+      --surface-secondary: #f9fafb;
+      --surface-tertiary: #f3f4f6;
+      --surface-inverse: #111827;
+
+      /* Text Colors */
       --text-primary: #0d0d0d;
       --text-secondary: #565869;
       --text-tertiary: #8e8ea0;
-      --border-color: #d1d5db;
-      --message-user-bg: #10a37f;
-      --message-ai-bg: #f7f7f8;
-      --message-user-text: #ffffff;
-      --message-ai-text: #0d0d0d;
-      --button-hover: #e6e6eb;
-      --sidebar-bg: #ffffff;
-      --input-bg: #ffffff;
-      --primary: #10a37f;
-      --primary-hover: #0d8f6f;
+      --text-inverse: #ffffff;
+
+      /* Border & Divider */
+      --border-light: #e5e7eb;
+      --border-medium: #d1d5db;
+      --divider: #e5e7eb;
+
+      /* Shadows - Layered depth system */
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+
+      /* Spacing System - Base unit is 4px */
+      --space-0: 0;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* Border Radius - Rounded corners */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Typography System */
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      --font-mono: 'Menlo', 'Consolas', 'Monaco', 'Courier New', monospace;
+
+      /* Font Sizes */
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+
+      /* Transitions & Animations */
+      --transition-fast: 150ms ease-in-out;
+      --transition-base: 300ms ease-in-out;
+      --transition-slow: 500ms ease-in-out;
+
+      /* Z-Index Scale */
+      --z-hide: -1;
+      --z-base: 0;
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-fixed: 300;
+      --z-modal-backdrop: 1000;
+      --z-modal: 1001;
+      --z-popover: 1002;
+      --z-tooltip: 1003;
     }
 
+    /* Dark Mode Color Overrides */
     html.dark-mode {
       color-scheme: dark;
-      /* Dark mode colors */
-      --bg-primary: #0d0d0d;
-      --bg-secondary: #1a1a1a;
-      --bg-tertiary: #2a2a2a;
+      --surface-primary: #0d0d0d;
+      --surface-secondary: #1a1a1a;
+      --surface-tertiary: #2a2a2a;
       --text-primary: #ececf1;
       --text-secondary: #c5c5d2;
       --text-tertiary: #8e8ea0;
-      --border-color: #404854;
-      --message-user-bg: #10a37f;
-      --message-ai-bg: #2a2a2a;
-      --message-user-text: #ffffff;
-      --message-ai-text: #ececf1;
-      --button-hover: #373737;
-      --sidebar-bg: #1a1a1a;
-      --input-bg: #2a2a2a;
+      --border-light: #404854;
+      --border-medium: #535c73;
+      --divider: #353d4a;
+      --neutral-0: #0d0d0d;
+      --neutral-100: #1a1a1a;
     }
+
+    /* ============================================================================
+       GLOBAL STYLES & RESET
+       ============================================================================
+       Reset default browser styles and establish baseline typography and spacing.
+    */
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
       margin: 0;
+      padding: 0;
       min-height: 100vh;
-      background: var(--bg-primary);
+      background: var(--surface-primary);
       color: var(--text-primary);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      transition: background-color var(--transition-base), 
+                  color var(--transition-base);
+      overflow: hidden;
     }
+
+    /* ============================================================================
+       LAYOUT GRID & MAIN SHELL
+       ============================================================================
+       Main layout uses CSS Grid to create a two-column layout with sidebar and
+       main content area. This structure provides a professional, spacious feel.
+    */
 
     .app-shell {
       display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: 1fr;
       gap: 0;
-      align-items: stretch;
+      min-height: 100vh;
+      background: var(--surface-primary);
     }
+
+    /* ============================================================================
+       SIDEBAR STYLES
+       ============================================================================
+       The sidebar contains navigation, project management, and chat history.
+       It features a clean vertical layout with smooth scrolling.
+    */
 
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 0;
-      padding: 16px;
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border-color);
+      gap: var(--space-0);
+      padding: var(--space-4);
+      background: var(--surface-primary);
+      border-right: 1px solid var(--border-light);
       overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: var(--shadow-xs);
+      transition: background-color var(--transition-base);
     }
 
+    /* Sidebar scrollbar styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--neutral-300);
+      border-radius: var(--radius-full);
+      transition: background var(--transition-fast);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--neutral-400);
+    }
+
+    /* Brand section - Company logo and name */
     .brand {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 0 0 20px 0;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 16px;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: var(--space-4);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: var(--text-lg);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      line-height: 1.2;
       color: var(--text-primary);
     }
 
     .brand p {
       margin: 0;
-      font-size: 0.85rem;
+      font-size: var(--text-xs);
       color: var(--text-tertiary);
+      line-height: 1.2;
     }
 
+    /* Card container - Groups related content */
     .card {
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-4);
+    }
+
+    .card:last-child {
+      border-bottom: none;
+      margin-bottom: var(--space-0);
     }
 
     .card h2 {
-      margin: 0 0 12px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: 0;
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-sm);
+      font-weight: 600;
       text-transform: uppercase;
-      font-size: 0.9rem;
+      letter-spacing: 0.05em;
       color: var(--text-tertiary);
     }
 
+    /* Lists - Projects, chats, history */
     .project-list,
     .history-list,
     .chat-list {
-      display: grid;
-      gap: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
     }
 
     .project-item,
     .history-item,
     .chat-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 10px 12px;
-      border-radius: 8px;
+      justify-content: space-between;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-primary);
       cursor: pointer;
-      transition: background-color 0.2s ease;
-      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+      font-size: var(--text-sm);
       text-align: left;
+      position: relative;
     }
 
     .project-item:hover,
     .history-item:hover,
     .chat-item:hover {
-      background: var(--button-hover);
+      background: var(--surface-tertiary);
+      border-color: var(--border-light);
     }
 
     .project-item.active,
     .chat-item.active {
-      background: rgba(16, 163, 127, 0.15);
-      color: var(--primary);
+      background: rgba(34, 197, 94, 0.1);
+      border-color: var(--primary-300);
+      color: var(--primary-700);
+      font-weight: 600;
     }
 
     .project-item span,
     .history-item span,
     .chat-item span {
       color: var(--text-primary);
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      flex: 1;
     }
 
     .project-item-wrapper {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: var(--space-2);
       width: 100%;
       overflow: hidden;
     }
 
+    /* Delete button - Remove items */
     .delete-project-btn {
       background: none;
       border: none;
       color: var(--text-secondary);
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s ease, color 0.2s ease;
-      font-size: 1rem;
+      padding: var(--space-2);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      font-size: var(--text-base);
       line-height: 1;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
     }
 
     .delete-project-btn:hover {
       background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
+      color: var(--error);
     }
 
+    /* Create button - Add new items */
     .create-project-btn {
       width: 32px;
       height: 32px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
       background: transparent;
       color: var(--text-primary);
-      font-size: 1rem;
+      font-size: var(--text-base);
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all var(--transition-fast);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
+      flex-shrink: 0;
     }
 
     .create-project-btn:hover {
-      background: var(--button-hover);
+      background: var(--surface-tertiary);
+      border-color: var(--primary-300);
+      color: var(--primary-700);
     }
+
+    .create-project-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* ============================================================================
+       MODAL STYLES
+       ============================================================================
+       Modal dialogs for creating and managing projects. Features smooth
+       animations and overlay backdrop.
+    */
 
     .modal-overlay {
       display: none;
@@ -216,334 +408,555 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: var(--z-modal-backdrop);
       align-items: center;
       justify-content: center;
+      animation: fadeIn var(--transition-fast) ease-in-out;
+      backdrop-filter: blur(4px);
     }
 
     .modal-overlay.active {
       display: flex;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .modal-dialog {
-      background: var(--bg-primary);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: var(--surface-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-xl);
       width: 90%;
-      max-width: 400px;
-      z-index: 1001;
+      max-width: 420px;
+      z-index: var(--z-modal);
+      animation: slideUp var(--transition-base) ease-in-out;
+      border: 1px solid var(--border-light);
+    }
+
+    .modal-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
     }
 
     .modal-dialog h3 {
-      margin: 0 0 16px 0;
-      font-size: 1.2rem;
+      margin: 0;
+      font-size: var(--text-xl);
       font-weight: 700;
       color: var(--text-primary);
     }
 
-    .modal-dialog input {
+    .modal-dialog-description {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Modal form inputs */
+    .modal-dialog input,
+    .modal-dialog textarea {
       width: 100%;
-      padding: 11px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      font-size: 0.95rem;
-      margin-bottom: 16px;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-medium);
+      font-size: var(--text-base);
+      font-family: var(--font-sans);
+      margin-bottom: var(--space-4);
       box-sizing: border-box;
-      background: var(--input-bg);
+      background: var(--surface-secondary);
       color: var(--text-primary);
-      transition: border-color 0.2s ease;
+      transition: all var(--transition-fast);
     }
 
-    .modal-dialog input:focus {
+    .modal-dialog input::placeholder,
+    .modal-dialog textarea::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .modal-dialog input:focus,
+    .modal-dialog textarea:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--primary-500);
+      background: var(--surface-primary);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
     }
 
+    /* Modal buttons */
     .modal-buttons {
       display: flex;
-      gap: 12px;
+      gap: var(--space-3);
       justify-content: flex-end;
     }
 
     .modal-btn {
-      padding: 10px 16px;
-      border-radius: 8px;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
       border: none;
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
     }
 
     .modal-btn.primary {
-      background: var(--primary);
+      background: var(--primary-600);
       color: white;
     }
 
     .modal-btn.primary:hover {
-      background: var(--primary-hover);
+      background: var(--primary-700);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-btn.primary:active {
+      transform: translateY(0);
     }
 
     .modal-btn.secondary {
-      background: var(--button-hover);
+      background: var(--surface-tertiary);
       color: var(--text-primary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-light);
     }
 
     .modal-btn.secondary:hover {
-      background: var(--bg-tertiary);
+      background: var(--neutral-200);
+      border-color: var(--border-medium);
     }
 
+    /* ============================================================================
+       BUTTON STYLES
+       ============================================================================
+       Consistent button styling across the application with hover states
+       and semantic variations.
+    */
+
+    /* New chat button - Primary action in sidebar */
     .new-chat-btn {
       width: 100%;
-      padding: 11px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: transparent;
-      color: var(--text-primary);
-      font-size: 0.95rem;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      border: none;
+      background: var(--primary-600);
+      color: white;
+      font-size: var(--text-sm);
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
-      margin-bottom: 16px;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
     }
 
     .new-chat-btn:hover {
-      background: var(--button-hover);
+      background: var(--primary-700);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
     }
+
+    .new-chat-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ============================================================================
+       MAIN CHAT PANEL
+       ============================================================================
+       The main content area containing header, chat window, and input footer.
+    */
 
     .chat-panel {
       display: flex;
       flex-direction: column;
+      gap: 0;
       border-radius: 0;
-      background: var(--bg-primary);
+      background: var(--surface-primary);
       border: none;
       box-shadow: none;
       overflow: hidden;
       min-height: 100vh;
     }
 
+    /* Header with title and controls */
     .header-bar {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      background: var(--bg-primary);
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      background: var(--surface-primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .header-content {
+      flex: 1;
+      min-width: 0;
     }
 
     .header-bar h1 {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: var(--text-2xl);
       font-weight: 700;
-      letter-spacing: -0.02em;
       color: var(--text-primary);
+      line-height: 1.2;
     }
 
     .header-bar p {
-      margin: 0;
+      margin: var(--space-1) 0 0 0;
       color: var(--text-secondary);
-      font-size: 0.9rem;
+      font-size: var(--text-sm);
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-shrink: 0;
+    }
+
+    /* Theme toggle button */
     .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border-color);
+      background: var(--surface-tertiary);
+      border: 1px solid var(--border-light);
       color: var(--text-primary);
       cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: background 0.2s ease;
-      margin-left: auto;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-lg);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
     }
 
     .theme-toggle:hover {
-      background: var(--button-hover);
+      background: var(--border-light);
+      transform: translateY(-1px);
     }
+
+    .theme-toggle:active {
+      transform: translateY(0);
+    }
+
+    /* ============================================================================
+       CHAT WINDOW & MESSAGES
+       ============================================================================
+       Message display area with professional styling for AI and user messages.
+    */
 
     .chat-window {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 40px;
+      padding: var(--space-8) var(--space-12);
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      background: var(--bg-primary);
-      max-width: 900px;
+      gap: var(--space-6);
+      background: var(--surface-primary);
+      max-width: 1000px;
       margin: 0 auto;
       width: 100%;
     }
 
-    .message {
-      display: flex;
-      gap: 12px;
-      width: 100%;
-      margin: 0;
-      overflow-wrap: anywhere;
+    /* Chat window scrollbar styling */
+    .chat-window::-webkit-scrollbar {
+      width: 8px;
     }
 
+    .chat-window::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-window::-webkit-scrollbar-thumb {
+      background: var(--neutral-300);
+      border-radius: var(--radius-full);
+      transition: background var(--transition-fast);
+    }
+
+    .chat-window::-webkit-scrollbar-thumb:hover {
+      background: var(--neutral-400);
+    }
+
+    /* Message container */
+    .message {
+      display: flex;
+      gap: var(--space-3);
+      width: 100%;
+      margin: 0;
+      overflow-wrap: break-word;
+      animation: messageSlideIn var(--transition-base) ease-in-out;
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* AI message alignment */
     .message.ai {
       justify-content: flex-start;
     }
 
+    /* User message alignment */
     .message.user {
       justify-content: flex-end;
     }
 
+    /* Message bubble content */
     .message-content {
       max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 12px;
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      word-break: break-word;
+      overflow: hidden;
     }
 
+    /* AI message styling */
     .message.ai .message-content {
-      background: var(--message-ai-bg);
-      color: var(--message-ai-text);
-      border: 1px solid var(--border-color);
+      background: var(--surface-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-xs);
     }
 
+    /* User message styling - Green theme */
     .message.user .message-content {
-      background: var(--message-user-bg);
-      color: var(--message-user-text);
+      background: var(--primary-600);
+      color: var(--text-inverse);
+      border: none;
+      box-shadow: var(--shadow-sm);
     }
 
+    /* Hide default labels */
     .message .label {
       display: none;
     }
 
+    /* Message text content */
     .message .content {
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
       line-height: 1.6;
       color: inherit;
       margin: 0;
     }
 
+    /* Code blocks in messages */
     .message pre {
-      background: #0f172a;
-      border-radius: 8px;
+      background: var(--neutral-900);
+      border-radius: var(--radius-lg);
       color: #f8fafc;
-      padding: 12px;
+      padding: var(--space-4);
       overflow-x: auto;
-      font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
       line-height: 1.5;
-      margin: 8px 0 0 0;
+      margin: var(--space-3) 0 0 0;
+      border: 1px solid var(--neutral-800);
     }
 
+    /* Tables in messages */
     .message table {
       width: 100%;
       border-collapse: collapse;
-      margin: 12px 0;
-      font-size: 0.9rem;
+      margin: var(--space-3) 0;
+      font-size: var(--text-xs);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
     }
 
     .message table th,
     .message table td {
-      border: 1px solid var(--border-color);
-      padding: 10px 12px;
+      border: 1px solid var(--border-light);
+      padding: var(--space-3);
       text-align: left;
     }
 
     .message table th {
-      background: var(--bg-tertiary);
+      background: var(--surface-tertiary);
       font-weight: 700;
-    }
-
-    .message blockquote {
-      margin: 12px 0;
-      padding: 12px 16px;
-      border-left: 3px solid var(--primary);
-      background: var(--bg-secondary);
       color: var(--text-primary);
     }
 
-    .message code {
-      background: var(--bg-secondary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-      font-size: 0.9em;
+    /* Blockquotes in messages */
+    .message blockquote {
+      margin: var(--space-3) 0;
+      padding: var(--space-3) var(--space-4);
+      border-left: 3px solid var(--primary-500);
+      background: var(--surface-secondary);
+      color: var(--text-primary);
+      border-radius: var(--radius-md);
     }
+
+    /* Inline code in messages */
+    .message code {
+      background: var(--surface-secondary);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--primary-700);
+      border: 1px solid var(--border-light);
+    }
+
+    .message pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      color: inherit;
+      border: none;
+    }
+
+    /* ============================================================================
+       INPUT & FOOTER
+       ============================================================================
+       Message input area with send button and status information.
+    */
 
     .footer-bar {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 16px;
+      gap: var(--space-4);
       align-items: end;
-      border-top: 1px solid var(--border-color);
-      padding: 16px 24px 24px;
-      background: var(--bg-primary);
-      max-width: 900px;
+      border-top: 1px solid var(--border-light);
+      padding: var(--space-4) var(--space-6) var(--space-6);
+      background: var(--surface-primary);
+      max-width: 1000px;
       margin: 0 auto;
       width: 100%;
+      box-shadow: var(--shadow-sm);
     }
 
     .input-wrapper {
       display: grid;
-      gap: 8px;
+      gap: var(--space-2);
+      flex: 1;
     }
 
+    /* Message textarea */
     textarea#prompt {
       width: 100%;
       min-height: 100px;
       max-height: 300px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      padding: 12px 16px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-medium);
+      padding: var(--space-3) var(--space-4);
       resize: vertical;
-      font-size: 0.95rem;
-      line-height: 1.5;
+      font-size: var(--text-sm);
+      line-height: 1.6;
       color: var(--text-primary);
-      background: var(--input-bg);
-      font-family: inherit;
-      transition: border-color 0.2s ease;
+      background: var(--surface-secondary);
+      font-family: var(--font-sans);
+      transition: all var(--transition-fast);
       outline: none;
     }
 
+    textarea#prompt::placeholder {
+      color: var(--text-tertiary);
+    }
+
     textarea#prompt:focus {
-      border-color: var(--primary);
+      border-color: var(--primary-500);
+      background: var(--surface-primary);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
     }
 
-    .send-button {
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: none;
-      background: var(--primary);
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: none;
-      transition: background 0.2s ease;
-      align-self: stretch;
-      min-height: 40px;
-    }
-
-    .send-button:hover {
-      background: var(--primary-hover);
-    }
-
-    .send-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
+    /* Status and help text */
     .status-line {
       color: var(--text-tertiary);
-      font-size: 0.85rem;
-      margin-top: 4px;
-      min-height: 18px;
+      font-size: var(--text-xs);
+      margin-top: var(--space-1);
+      min-height: 16px;
+      transition: color var(--transition-fast);
+    }
+
+    .status-line.error {
+      color: var(--error);
+    }
+
+    .status-line.success {
+      color: var(--success);
+    }
+
+    .status-line.info {
+      color: var(--info);
     }
 
     .small-note {
-      font-size: 0.85rem;
+      font-size: var(--text-xs);
       color: var(--text-tertiary);
     }
 
+    /* Send button - Primary action */
+    .send-button {
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-lg);
+      border: none;
+      background: var(--primary-600);
+      color: white;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      align-self: stretch;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      flex-shrink: 0;
+    }
+
+    .send-button:hover {
+      background: var(--primary-700);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .send-button:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .send-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ============================================================================
+       RESPONSIVE DESIGN
+       ============================================================================
+       Mobile-first responsive styles for tablet and mobile devices.
+    */
+
+    /* Tablet layout */
     @media (max-width: 1080px) {
       .app-shell {
         grid-template-columns: 1fr;
@@ -551,22 +964,40 @@
 
       .sidebar {
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-light);
+        max-height: 40vh;
+      }
+
+      .chat-window {
+        padding: var(--space-6) var(--space-8);
+        max-width: 100%;
+      }
+
+      .footer-bar {
+        max-width: 100%;
       }
     }
 
+    /* Mobile layout */
     @media (max-width: 720px) {
       .app-shell {
         grid-template-columns: 1fr;
       }
 
+      .sidebar {
+        display: none;
+        border-bottom: 1px solid var(--border-light);
+      }
+
       .chat-window {
-        padding: 16px 12px;
+        padding: var(--space-4) var(--space-4);
+        gap: var(--space-4);
       }
 
       .footer-bar {
-        padding: 12px 12px 16px;
+        padding: var(--space-3) var(--space-4) var(--space-4);
         grid-template-columns: 1fr;
+        max-width: 100%;
       }
 
       .send-button {
@@ -574,78 +1005,260 @@
       }
 
       .message-content {
-        max-width: 100%;
+        max-width: 85%;
       }
 
       textarea#prompt {
         min-height: 80px;
       }
 
-      .sidebar {
+      .header-bar {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+      }
+
+      .header-content {
+        width: 100%;
+      }
+
+      .header-bar h1 {
+        font-size: var(--text-xl);
+      }
+
+      .header-bar p {
         display: none;
+      }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+      .message-content {
+        max-width: 100%;
+        padding: var(--space-3);
+      }
+
+      .chat-window {
+        padding: var(--space-3) var(--space-2);
+        gap: var(--space-3);
+      }
+
+      textarea#prompt {
+        font-size: 16px;
+      }
+
+      .modal-dialog {
+        width: 95%;
+        padding: var(--space-6);
+      }
+    }
+
+    /* ============================================================================
+       UTILITIES & HELPERS
+       ============================================================================
+       Utility classes for common styling patterns.
+    */
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    /* Loading animation */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+
+    /* Print styles */
+    @media print {
+      .header-bar, .footer-bar, .sidebar,
+      .create-project-btn, .delete-project-btn, .send-button {
+        display: none !important;
+      }
+      .chat-window {
+        max-width: 100%;
+        padding: 0;
+      }
+      .message {
+        page-break-inside: avoid;
       }
     }
   </style>
 </head>
 <body>
+  <!-- =========================================================================
+       MODAL DIALOGS
+       =========================================================================
+       These modals are hidden by default and shown via JavaScript for creating
+       and managing projects. Uses a backdrop overlay with smooth animations.
+  -->
+
   <div class="modal-overlay" id="projectModal">
     <div class="modal-dialog">
-      <h3>Create New Project</h3>
-      <input type="text" id="projectNameInput" placeholder="Enter project name..." />
+      <div class="modal-header">
+        <h3>Create New Project</h3>
+        <p class="modal-dialog-description">
+          Organize your conversations by creating new project categories.
+        </p>
+      </div>
+      <input
+        type="text"
+        id="projectNameInput"
+        placeholder="Enter a descriptive project name..."
+        maxlength="100"
+        autocomplete="off"
+      />
       <div class="modal-buttons">
         <button class="modal-btn secondary" id="cancelBtn">Cancel</button>
-        <button class="modal-btn primary" id="confirmBtn">Create</button>
+        <button class="modal-btn primary" id="confirmBtn">Create Project</button>
       </div>
     </div>
   </div>
 
+  <!-- =========================================================================
+       MAIN APPLICATION LAYOUT
+       =========================================================================
+       The root app shell that contains the sidebar and main chat panel.
+       Uses CSS Grid for responsive layout.
+  -->
+
   <div class="app-shell">
+    <!-- =======================================================================
+         LEFT SIDEBAR
+         =======================================================================
+         Navigation sidebar containing project list, chat history, and quick
+         actions. Collapsible on mobile devices.
+    -->
     <aside class="sidebar">
+      <!-- Brand Section - App Identity & Quick Actions -->
       <div class="brand">
         <div>
           <h1>NorthernAmpAI</h1>
           <p>Engineering AI workspace</p>
         </div>
-        <button class="new-chat-btn" id="newChatBtn">+ New Chat</button>
+        <button class="new-chat-btn" id="newChatBtn" title="Start a new conversation">
+          ➕ New Chat
+        </button>
       </div>
 
+      <!-- Projects Section - Manage project categories -->
       <section class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 style="margin: 0;">Projects</h2>
-          <button class="create-project-btn" id="createProjectBtn" title="Add a new project">+</button>
+          <h2>Projects</h2>
+          <button
+            class="create-project-btn"
+            id="createProjectBtn"
+            title="Create a new project"
+            aria-label="Create new project"
+          >
+            ➕
+          </button>
         </div>
-        <div class="project-list" id="projectList"></div>
+        <div class="project-list" id="projectList">
+          <!-- Project items dynamically generated by JavaScript -->
+        </div>
       </section>
 
+      <!-- Conversations Section - Show chats for current project -->
       <section class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 style="margin: 0;">Chats in <span id="currentProjectTitle">Project</span></h2>
-          <button class="create-project-btn" id="createChatBtn" title="Add a new chat">+</button>
+          <h2>Conversations in <span id="currentProjectTitle">Project</span></h2>
+          <button
+            class="create-project-btn"
+            id="createChatBtn"
+            title="Create a new conversation"
+            aria-label="Create new chat"
+          >
+            ➕
+          </button>
         </div>
-        <div class="chat-list" id="chatList"></div>
+        <div class="chat-list" id="chatList">
+          <!-- Chat items dynamically generated by JavaScript -->
+        </div>
       </section>
     </aside>
 
+    <!-- =======================================================================
+         MAIN CHAT PANEL
+         =======================================================================
+         Primary content area displaying the active conversation, with header,
+         message area, and input section.
+    -->
     <main class="chat-panel">
+      <!-- Header with title and theme toggle -->
       <div class="header-bar">
-        <div>
+        <div class="header-content">
           <h1>NorthernAmpAI</h1>
-          <p>Professional electrical engineering assistant.</p>
+          <p>Professional electrical engineering AI assistant | Advanced technical guidance</p>
         </div>
-        <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
+        <div class="header-controls">
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            title="Toggle dark mode"
+            aria-label="Toggle dark mode"
+            aria-pressed="false"
+          >
+            🌙
+          </button>
+        </div>
       </div>
 
-      <section class="chat-window" id="chatWindow"></section>
+      <!-- Chat Messages Display Area -->
+      <section class="chat-window" id="chatWindow" role="log" aria-live="polite">
+        <!-- Messages are dynamically rendered here by JavaScript -->
+      </section>
 
+      <!-- Message Input Footer -->
       <div class="footer-bar">
         <div class="input-wrapper">
-          <textarea id="prompt" placeholder="Type your question here..." rows="4"></textarea>
-          <div class="status-line" id="statusLine">Press Enter to send, Shift + Enter for a new line.</div>
+          <!-- Textarea for composing messages -->
+          <textarea
+            id="prompt"
+            placeholder="Ask about transformers, protection systems, power studies, SCADA, or engineering reports..."
+            rows="4"
+            aria-label="Message input"
+            spellcheck="true"
+          ></textarea>
+          <!-- Status line showing send instructions and feedback -->
+          <div class="status-line" id="statusLine">
+            Press <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for new line
+          </div>
         </div>
-        <button class="send-button" id="sendBtn">Send</button>
+        <!-- Send button -->
+        <button class="send-button" id="sendBtn" title="Send message" aria-label="Send message">
+          Send
+        </button>
       </div>
     </main>
   </div>
+
+  <!-- =========================================================================
+       APPLICATION JAVASCRIPT
+       =========================================================================
+       Core application logic including:
+       - Chat and project management
+       - State persistence using localStorage
+       - API communication with backend
+       - UI updates and rendering
+       - Event handling
+    -->
 
   <script>
     const API_URL = "https://oh4xf4eo5i.execute-api.us-east-1.amazonaws.com/prod/NorthernAmpAI";
