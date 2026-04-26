@@ -93,13 +93,15 @@
     }
 
     .project-list,
-    .history-list {
+    .history-list,
+    .chat-list {
       display: grid;
       gap: 10px;
     }
 
     .project-item,
-    .history-item {
+    .history-item,
+    .chat-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -113,13 +115,25 @@
     }
 
     .project-item:hover,
-    .history-item:hover {
+    .history-item:hover,
+    .chat-item:hover {
       background: var(--surface-muted);
       transform: translateY(-1px);
     }
 
+    .project-item.active {
+      background: rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.28);
+    }
+
+    .chat-item.active {
+      background: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.28);
+    }
+
     .project-item span,
-    .history-item span {
+    .history-item span,
+    .chat-item span {
       color: var(--text-muted);
       font-size: 0.95rem;
     }
@@ -533,8 +547,11 @@
       </section>
 
       <section class="card">
-        <h2>Chat History</h2>
-        <div class="history-list" id="historyList"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 style="margin: 0;">Chats in <span id="currentProjectTitle">Project</span></h2>
+          <button class="create-project-btn" id="createChatBtn" title="Add a new chat">+</button>
+        </div>
+        <div class="chat-list" id="chatList"></div>
       </section>
     </aside>
 
@@ -560,9 +577,12 @@
 
   <script>
     const API_URL = "https://oh4xf4eo5i.execute-api.us-east-1.amazonaws.com/prod/NorthernAmpAI";
-    const STORAGE_KEY = "NorthernAmpAI_conversation";
-    const HISTORY_KEY = "NorthernAmpAI_history";
+    const PRESIGN_API_URL = "http://localhost:3000/presign-upload";
+    const STORAGE_KEY_PREFIX = "NorthernAmpAI_conversation_";
+    const CHATS_KEY_PREFIX = "NorthernAmpAI_chats_";
     const PROJECTS_KEY = "NorthernAmpAI_projects";
+    const SELECTED_PROJECT_KEY = "NorthernAmpAI_selected_project";
+    const SELECTED_CHAT_KEY = "NorthernAmpAI_selected_chat";
     
     const defaultProjects = [
       "General Engineering",
@@ -573,12 +593,9 @@
       "Reports"
     ];
 
-    const sampleHistory = [
-      "Transformer sizing for 25 MW",
-      "ANSI transformer sizes",
-      "Grounding study assumptions",
-      "Relay settings review"
-    ];
+    let selectedProject = defaultProjects[0];
+    let selectedChatId = null;
+    let chats = {}; // { projectName: [ { id, title, conversation } ] }
 
     const chatWindow = document.getElementById("chatWindow");
     const promptInput = document.getElementById("prompt");
@@ -586,15 +603,16 @@
     const newChatBtn = document.getElementById("newChatBtn");
     const statusLine = document.getElementById("statusLine");
     const projectList = document.getElementById("projectList");
-    const historyList = document.getElementById("historyList");
+    const chatList = document.getElementById("chatList");
+    const currentProjectTitle = document.getElementById("currentProjectTitle");
     const projectModal = document.getElementById("projectModal");
     const projectNameInput = document.getElementById("projectNameInput");
     const createProjectBtn = document.getElementById("createProjectBtn");
+    const createChatBtn = document.getElementById("createChatBtn");
     const confirmBtn = document.getElementById("confirmBtn");
     const cancelBtn = document.getElementById("cancelBtn");
 
     let conversation = [];
-    let history = [];
     let projects = [];
     let isThinking = false;
 
@@ -603,7 +621,7 @@
     function renderProjects() {
       projectList.innerHTML = projects
         .map((project) => `
-          <div class="project-item">
+          <div class="project-item${project === selectedProject ? " active" : ""}" data-project="${escapeHtml(project)}">
             <div class="project-item-wrapper">
               <span>${project}</span>
               <button class="delete-project-btn" data-project="${escapeHtml(project)}" title="Delete project">×</button>
@@ -612,7 +630,12 @@
         `)
         .join("");
       
-      // Add event listeners to delete buttons
+      document.querySelectorAll(".project-item").forEach(item => {
+        item.addEventListener("click", () => {
+          switchProject(item.dataset.project);
+        });
+      });
+
       document.querySelectorAll(".delete-project-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -621,13 +644,31 @@
       });
     }
 
-    function renderHistory() {
-      const combined = [...sampleHistory, ...history].slice(0, 10);
-      historyList.innerHTML = combined
-        .map((entry) => `
-          <div class="history-item"><span>${entry}</span></div>
+    function renderChats() {
+      const projectChats = chats[selectedProject] || [];
+      chatList.innerHTML = projectChats
+        .map((chat) => `
+          <div class="chat-item${chat.id === selectedChatId ? " active" : ""}" data-chat-id="${chat.id}">
+            <div class="project-item-wrapper">
+              <span>${escapeHtml(chat.title)}</span>
+              <button class="delete-project-btn" data-chat-id="${chat.id}" title="Delete chat">×</button>
+            </div>
+          </div>
         `)
         .join("");
+      
+      document.querySelectorAll(".chat-item").forEach(item => {
+        item.addEventListener("click", () => {
+          switchChat(item.dataset.chatId);
+        });
+      });
+
+      document.querySelectorAll(".delete-project-btn[data-chat-id]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteChat(btn.dataset.chatId);
+        });
+      });
     }
 
     function renderConversation() {
@@ -655,35 +696,165 @@
         .replace(/'/g, "&#039;");
     }
 
+    function getConversationKey(projectName) {
+      return `${STORAGE_KEY_PREFIX}${projectName}`;
+    }
+
+    function getChatsKey(projectName) {
+      return `${CHATS_KEY_PREFIX}${projectName}`;
+    }
+
+    function saveSelectedProject() {
+      localStorage.setItem(SELECTED_PROJECT_KEY, selectedProject);
+    }
+
+    function saveSelectedChat() {
+      localStorage.setItem(SELECTED_CHAT_KEY, selectedChatId);
+    }
+
     function saveConversation() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation));
+      if (!selectedProject || !selectedChatId) return;
+      const projectChats = chats[selectedProject] || [];
+      const chat = projectChats.find(c => c.id === selectedChatId);
+      if (chat) {
+        chat.conversation = conversation;
+        saveChats();
+      }
     }
 
-    function saveHistory(item) {
-      if (!item || history.includes(item) || sampleHistory.includes(item)) return;
-      history.unshift(item);
-      if (history.length > 10) history.length = 10;
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-      renderHistory();
+    function saveChats() {
+      if (!selectedProject) return;
+      localStorage.setItem(getChatsKey(selectedProject), JSON.stringify(chats[selectedProject] || []));
     }
 
-    function saveProjects() {
-      localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+    function sanitizeForS3(value) {
+      return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9-_\.]/g, "_")
+        .replace(/_+/g, "_");
+    }
+
+    async function saveChatToS3(projectName, conversationData) {
+      if (!projectName || !conversationData || conversationData.length === 0) {
+        return false;
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const safeProject = sanitizeForS3(projectName);
+      const fileName = `chat_${safeProject}_${timestamp}.json`;
+      const payload = {
+        projectName,
+        savedAt: new Date().toISOString(),
+        conversation: conversationData
+      };
+
+      try {
+        const response = await fetch(PRESIGN_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectName, fileName })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Presign request failed (${response.status})`);
+        }
+
+        const { uploadUrl, objectKey } = await response.json();
+        const uploadResponse = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`S3 upload failed (${uploadResponse.status})`);
+        }
+
+        return true;
+      } catch (error) {
+        console.warn("S3 save failed:", error);
+        return false;
+      }
+    }
+
+    function loadChats() {
+      if (!selectedProject) return;
+      const stored = localStorage.getItem(getChatsKey(selectedProject));
+      if (stored) {
+        try {
+          chats[selectedProject] = JSON.parse(stored);
+        } catch (error) {
+          chats[selectedProject] = [];
+        }
+      } else {
+        chats[selectedProject] = [];
+      }
+    }
+
+    function loadCurrentChat() {
+      if (!selectedProject || !selectedChatId) {
+        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
+        return;
+      }
+      const projectChats = chats[selectedProject] || [];
+      const chat = projectChats.find(c => c.id === selectedChatId);
+      if (chat) {
+        conversation = chat.conversation || [];
+      } else {
+        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
+      }
+      if (!conversation || conversation.length === 0) {
+        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
+      }
+    }
+
+    function switchProject(projectName) {
+      if (!projectName || selectedProject === projectName) return;
+      selectedProject = projectName;
+      saveSelectedProject();
+      loadChats();
+      const projectChats = chats[selectedProject] || [];
+      if (projectChats.length === 0) {
+        // Create a default chat for new projects
+        const chatId = Date.now().toString();
+        const defaultChat = {
+          id: chatId,
+          title: "Welcome",
+          conversation: [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")]
+        };
+        chats[selectedProject] = [defaultChat];
+        saveChats();
+        selectedChatId = chatId;
+      } else if (projectChats.length > 0) {
+        selectedChatId = projectChats[0].id;
+      } else {
+        selectedChatId = null;
+      }
+      saveSelectedChat();
+      loadCurrentChat();
+      currentProjectTitle.textContent = selectedProject;
+      renderProjects();
+      renderChats();
+      renderConversation();
+      updateStatus(`Switched to project: ${selectedProject}`);
+    }
+
+    function switchChat(chatId) {
+      if (!chatId || selectedChatId === chatId) return;
+      selectedChatId = chatId;
+      saveSelectedChat();
+      loadCurrentChat();
+      renderChats();
+      renderConversation();
+      updateStatus(`Switched to chat: ${chats[selectedProject].find(c => c.id === chatId).title}`);
     }
 
     function loadSession() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      const storedHistory = localStorage.getItem(HISTORY_KEY);
       const storedProjects = localStorage.getItem(PROJECTS_KEY);
-      
-      if (storedHistory) {
-        try {
-          history = JSON.parse(storedHistory);
-        } catch (error) {
-          history = [];
-        }
-      }
-      
+      const storedSelectedProject = localStorage.getItem(SELECTED_PROJECT_KEY);
+      const storedSelectedChat = localStorage.getItem(SELECTED_CHAT_KEY);
+
       if (storedProjects) {
         try {
           projects = JSON.parse(storedProjects);
@@ -693,23 +864,29 @@
       } else {
         projects = [...defaultProjects];
       }
-      
-      if (stored) {
-        try {
-          conversation = JSON.parse(stored);
-        } catch (error) {
-          conversation = [];
-        }
+
+      if (storedSelectedProject && projects.includes(storedSelectedProject)) {
+        selectedProject = storedSelectedProject;
+      } else if (projects.length > 0) {
+        selectedProject = projects[0];
       }
 
-      if (!conversation || conversation.length === 0) {
-        conversation = [
-          createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")
-        ];
+      loadChats();
+      const projectChats = chats[selectedProject] || [];
+      if (storedSelectedChat && projectChats.some(c => c.id === storedSelectedChat)) {
+        selectedChatId = storedSelectedChat;
+      } else if (projectChats.length > 0) {
+        selectedChatId = projectChats[0].id;
+      } else {
+        selectedChatId = null;
       }
+
+      loadCurrentChat();
+      currentProjectTitle.textContent = selectedProject;
+
       renderConversation();
       renderProjects();
-      renderHistory();
+      renderChats();
     }
 
     function updateStatus(text) {
@@ -740,16 +917,71 @@
       }
       
       projects.push(trimmedName);
+      chats[trimmedName] = [];
       saveProjects();
-      renderProjects();
+      switchProject(trimmedName);
       closeProjectModal();
     }
 
     function deleteProject(projectName) {
-      if (confirm(`Are you sure you want to delete "${projectName}"?`)) {
+      if (projects.length === 1) {
+        alert("At least one project must remain.");
+        return;
+      }
+
+      if (confirm(`Are you sure you want to delete "${projectName}"? This will delete all chats in the project.`)) {
         projects = projects.filter(p => p !== projectName);
+        delete chats[projectName];
+        localStorage.removeItem(getChatsKey(projectName));
+        if (selectedProject === projectName) {
+          selectedProject = projects[0];
+          saveSelectedProject();
+          loadChats();
+          const projectChats = chats[selectedProject] || [];
+          selectedChatId = projectChats.length > 0 ? projectChats[0].id : null;
+          saveSelectedChat();
+          loadCurrentChat();
+          currentProjectTitle.textContent = selectedProject;
+        }
         saveProjects();
         renderProjects();
+        renderChats();
+        renderConversation();
+      }
+    }
+
+    function createChat() {
+      if (!selectedProject) return;
+      const chatId = Date.now().toString();
+      const newChat = {
+        id: chatId,
+        title: "New Chat",
+        conversation: [createMessage("assistant", "New chat started. How can NorthernAmpAI support your engineering task?")]
+      };
+      if (!chats[selectedProject]) chats[selectedProject] = [];
+      chats[selectedProject].push(newChat);
+      saveChats();
+      switchChat(chatId);
+    }
+
+    function deleteChat(chatId) {
+      if (!selectedProject || !chatId) return;
+      const projectChats = chats[selectedProject] || [];
+      if (projectChats.length === 1) {
+        alert("At least one chat must remain in the project.");
+        return;
+      }
+      if (confirm("Are you sure you want to delete this chat?")) {
+        chats[selectedProject] = projectChats.filter(c => c.id !== chatId);
+        if (selectedChatId === chatId) {
+          const remaining = chats[selectedProject];
+          selectedChatId = remaining.length > 0 ? remaining[0].id : null;
+          saveSelectedChat();
+          loadCurrentChat();
+        }
+        saveChats();
+        renderChats();
+        renderConversation();
       }
     }
 
@@ -786,8 +1018,22 @@
         const answer = body.answer || body.message || "No answer returned from the API.";
         replaceLastAssistantMessage(answer);
         saveConversation();
-        saveHistory(question);
-        updateStatus("Answer received. Press Enter to ask the next question.");
+        const savedToS3 = await saveChatToS3(selectedProject, conversation);
+        // Update chat title if it's the first user message
+        if (selectedProject && selectedChatId) {
+          const projectChats = chats[selectedProject] || [];
+          const chat = projectChats.find(c => c.id === selectedChatId);
+          if (chat && chat.title === "New Chat") {
+            chat.title = question.length > 50 ? question.substring(0, 50) + "..." : question;
+            saveChats();
+            renderChats();
+          }
+        }
+        if (savedToS3) {
+          updateStatus("Answer received and chat saved to S3. Press Enter to ask the next question.");
+        } else {
+          updateStatus("Answer received. Chat saved locally; S3 upload failed.");
+        }
       } catch (error) {
         replaceLastAssistantMessage(`Error: ${error.message}`);
         updateStatus("Unable to connect to the API. Check your network or endpoint.");
@@ -814,18 +1060,14 @@
     }
 
     function startNewChat() {
-      conversation = [
-        createMessage("assistant", "New session started. How can NorthernAmpAI support your engineering task?")
-      ];
-      saveConversation();
-      renderConversation();
-      updateStatus("New chat created. Enter your question below.");
+      createChat();
     }
 
     // Event listeners
     sendBtn.addEventListener("click", sendQuestion);
     newChatBtn.addEventListener("click", startNewChat);
     createProjectBtn.addEventListener("click", openProjectModal);
+    createChatBtn.addEventListener("click", createChat);
     confirmBtn.addEventListener("click", () => createProject(projectNameInput.value));
     cancelBtn.addEventListener("click", closeProjectModal);
 
