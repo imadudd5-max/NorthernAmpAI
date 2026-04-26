@@ -16,7 +16,7 @@
     :root {
       color-scheme: light;
 
-      /* Primary Color Palette - Professional Green */
+      /* Primary Color Palette - Vibrant Green */
       --primary-50: #f0fdf4;
       --primary-100: #dcfce7;
       --primary-200: #bbf7d0;
@@ -27,6 +27,10 @@
       --primary-700: #15803d;
       --primary-800: #166534;
       --primary-900: #145231;
+
+      /* Accent - Modern Blue */
+      --accent-500: #3b82f6;
+      --accent-600: #2563eb;
 
       /* Neutral Color Palette - Grays */
       --neutral-0: #ffffff;
@@ -66,25 +70,25 @@
       --border-medium: #d1d5db;
       --divider: #e5e7eb;
 
-      /* Shadows - Layered depth system */
-      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+      /* Shadows - Modern depth system */
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+      --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
 
-      /* Spacing System - Base unit is 4px */
+      /* Spacing System - Compact (base unit 4px) */
       --space-0: 0;
       --space-1: 0.25rem;
       --space-2: 0.5rem;
       --space-3: 0.75rem;
       --space-4: 1rem;
+      --space-5: 1.25rem;
       --space-6: 1.5rem;
       --space-8: 2rem;
       --space-12: 3rem;
-      --space-16: 4rem;
 
-      /* Border Radius - Rounded corners */
+      /* Border Radius - Modern rounded */
       --radius-sm: 0.375rem;
       --radius-md: 0.5rem;
       --radius-lg: 0.75rem;
@@ -106,9 +110,9 @@
       --text-3xl: 1.875rem;
 
       /* Transitions & Animations */
-      --transition-fast: 150ms ease-in-out;
-      --transition-base: 300ms ease-in-out;
-      --transition-slow: 500ms ease-in-out;
+      --transition-fast: 100ms ease-in-out;
+      --transition-base: 200ms ease-in-out;
+      --transition-slow: 300ms ease-in-out;
 
       /* Z-Index Scale */
       --z-hide: -1;
@@ -184,7 +188,7 @@
 
     .app-shell {
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 260px 1fr;
       grid-template-rows: 1fr;
       gap: 0;
       min-height: 100vh;
@@ -202,12 +206,12 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-0);
-      padding: var(--space-4);
+      padding: var(--space-3);
       background: var(--surface-primary);
       border-right: 1px solid var(--border-light);
       overflow-y: auto;
       overflow-x: hidden;
-      box-shadow: var(--shadow-xs);
+      box-shadow: var(--shadow-sm);
       transition: background-color var(--transition-base);
     }
 
@@ -234,18 +238,19 @@
     .brand {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      padding: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
+      gap: var(--space-2);
+      padding: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
       border-bottom: 1px solid var(--border-light);
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--space-3);
     }
 
     .brand h1 {
       margin: 0;
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
       font-weight: 700;
       line-height: 1.2;
       color: var(--text-primary);
+      letter-spacing: -0.5px;
     }
 
     .brand p {
@@ -259,10 +264,10 @@
     .card {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      margin-bottom: var(--space-6);
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
       border-bottom: 1px solid var(--border-light);
-      padding-bottom: var(--space-4);
+      padding-bottom: var(--space-3);
     }
 
     .card:last-child {
@@ -271,11 +276,11 @@
     }
 
     .card h2 {
-      margin: 0 0 var(--space-2);
-      font-size: var(--text-sm);
-      font-weight: 600;
+      margin: 0 0 var(--space-1);
+      font-size: var(--text-xs);
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
       color: var(--text-tertiary);
     }
 
@@ -285,7 +290,7 @@
     .chat-list {
       display: flex;
       flex-direction: column;
-      gap: var(--space-2);
+      gap: var(--space-1);
     }
 
     .project-item,
@@ -295,7 +300,7 @@
       align-items: center;
       justify-content: space-between;
       gap: var(--space-2);
-      padding: var(--space-3);
+      padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-md);
       background: transparent;
       border: 1px solid transparent;
@@ -312,14 +317,16 @@
     .chat-item:hover {
       background: var(--surface-tertiary);
       border-color: var(--border-light);
+      transform: translateX(2px);
     }
 
     .project-item.active,
     .chat-item.active {
-      background: rgba(34, 197, 94, 0.1);
-      border-color: var(--primary-300);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+      border-color: var(--primary-400);
       color: var(--primary-700);
       font-weight: 600;
+      box-shadow: var(--shadow-xs);
     }
 
     .project-item span,
@@ -346,9 +353,9 @@
     .delete-project-btn {
       background: none;
       border: none;
-      color: var(--text-secondary);
+      color: var(--text-tertiary);
       cursor: pointer;
-      padding: var(--space-2);
+      padding: var(--space-1);
       border-radius: var(--radius-md);
       transition: all var(--transition-fast);
       font-size: var(--text-base);
@@ -357,24 +364,26 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
+      opacity: 0.6;
     }
 
     .delete-project-btn:hover {
-      background: rgba(239, 68, 68, 0.1);
+      background: rgba(239, 68, 68, 0.15);
       color: var(--error);
+      opacity: 1;
     }
 
     /* Create button - Add new items */
     .create-project-btn {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-light);
       background: transparent;
-      color: var(--text-primary);
-      font-size: var(--text-base);
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
       cursor: pointer;
       transition: all var(--transition-fast);
       display: flex;
@@ -385,13 +394,13 @@
     }
 
     .create-project-btn:hover {
-      background: var(--surface-tertiary);
-      border-color: var(--primary-300);
+      background: var(--primary-50);
+      border-color: var(--primary-400);
       color: var(--primary-700);
     }
 
     .create-project-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.92);
     }
 
     /* ============================================================================
@@ -551,12 +560,12 @@
     /* New chat button - Primary action in sidebar */
     .new-chat-btn {
       width: 100%;
-      padding: var(--space-3) var(--space-4);
+      padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-lg);
       border: none;
-      background: var(--primary-600);
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
       color: white;
-      font-size: var(--text-sm);
+      font-size: var(--text-xs);
       font-weight: 600;
       cursor: pointer;
       transition: all var(--transition-fast);
@@ -564,10 +573,13 @@
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow-sm);
     }
 
     .new-chat-btn:hover {
-      background: var(--primary-700);
+      background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
@@ -600,7 +612,7 @@
       align-items: center;
       justify-content: space-between;
       gap: var(--space-4);
-      padding: var(--space-4) var(--space-6);
+      padding: var(--space-3) var(--space-5);
       border-bottom: 1px solid var(--border-light);
       background: var(--surface-primary);
       box-shadow: var(--shadow-xs);
@@ -613,16 +625,17 @@
 
     .header-bar h1 {
       margin: 0;
-      font-size: var(--text-2xl);
+      font-size: var(--text-xl);
       font-weight: 700;
       color: var(--text-primary);
       line-height: 1.2;
+      letter-spacing: -0.5px;
     }
 
     .header-bar p {
       margin: var(--space-1) 0 0 0;
       color: var(--text-secondary);
-      font-size: var(--text-sm);
+      font-size: var(--text-xs);
     }
 
     .header-controls {
@@ -667,12 +680,12 @@
     .chat-window {
       flex: 1;
       overflow-y: auto;
-      padding: var(--space-8) var(--space-12);
+      padding: var(--space-6) var(--space-8);
       display: flex;
       flex-direction: column;
-      gap: var(--space-6);
+      gap: var(--space-4);
       background: var(--surface-primary);
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
       width: 100%;
     }
@@ -709,7 +722,7 @@
     @keyframes messageSlideIn {
       from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(6px);
       }
       to {
         opacity: 1;
@@ -729,8 +742,8 @@
 
     /* Message bubble content */
     .message-content {
-      max-width: 70%;
-      padding: var(--space-4);
+      max-width: 75%;
+      padding: var(--space-3) var(--space-4);
       border-radius: var(--radius-lg);
       word-break: break-word;
       overflow: hidden;
@@ -746,7 +759,7 @@
 
     /* User message styling - Green theme */
     .message.user .message-content {
-      background: var(--primary-600);
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
       color: var(--text-inverse);
       border: none;
       box-shadow: var(--shadow-sm);
@@ -1248,27 +1261,26 @@
       </div>
     </main>
   </div>
+/* ====================================================================
+       CONFIGURATION & CONSTANTS
+       ====================================================================
+       All application configuration in one place for easy maintenance.
+       This includes API endpoints, storage keys, and default values.
+    */
 
-  <!-- =========================================================================
-       APPLICATION JAVASCRIPT
-       =========================================================================
-       Core application logic including:
-       - Chat and project management
-       - State persistence using localStorage
-       - API communication with backend
-       - UI updates and rendering
-       - Event handling
-    -->
-
-  <script>
+    // Backend API endpoints for sending questions and file uploads
     const API_URL = "https://oh4xf4eo5i.execute-api.us-east-1.amazonaws.com/prod/NorthernAmpAI";
     const PRESIGN_API_URL = "http://localhost:3000/presign-upload";
+
+    // localStorage keys for application state persistence
     const STORAGE_KEY_PREFIX = "NorthernAmpAI_conversation_";
     const CHATS_KEY_PREFIX = "NorthernAmpAI_chats_";
     const PROJECTS_KEY = "NorthernAmpAI_projects";
     const SELECTED_PROJECT_KEY = "NorthernAmpAI_selected_project";
     const SELECTED_CHAT_KEY = "NorthernAmpAI_selected_chat";
-    
+    const THEME_KEY = "NorthernAmpAI_theme";
+
+    // Default project categories that appear on first load
     const defaultProjects = [
       "General Engineering",
       "Transformers",
@@ -1278,18 +1290,26 @@
       "Reports"
     ];
 
-    let selectedProject = defaultProjects[0];
-    let selectedChatId = null;
-    let chats = {}; // { projectName: [ { id, title, conversation } ] }
+    /* ====================================================================
+       DOM ELEMENT REFERENCES
+       ====================================================================
+       Cache all frequently accessed DOM elements to improve performance
+       and avoid repeated querySelector calls.
+    */
 
+    // Chat and messaging elements
     const chatWindow = document.getElementById("chatWindow");
     const promptInput = document.getElementById("prompt");
     const sendBtn = document.getElementById("sendBtn");
     const newChatBtn = document.getElementById("newChatBtn");
     const statusLine = document.getElementById("statusLine");
+
+    // Project and chat list elements
     const projectList = document.getElementById("projectList");
     const chatList = document.getElementById("chatList");
     const currentProjectTitle = document.getElementById("currentProjectTitle");
+
+    // Modal elements
     const projectModal = document.getElementById("projectModal");
     const projectNameInput = document.getElementById("projectNameInput");
     const createProjectBtn = document.getElementById("createProjectBtn");
@@ -1297,103 +1317,54 @@
     const confirmBtn = document.getElementById("confirmBtn");
     const cancelBtn = document.getElementById("cancelBtn");
 
-    let conversation = [];
+    // Theme toggle
+    const themeToggle = document.getElementById("themeToggle");
+
+    /* ====================================================================
+       APPLICATION STATE
+       ====================================================================
+       Global variables tracking the application's current state. These
+       are used by multiple functions across the app.
+    */
+
+    // Currently selected project and chat
+    let selectedProject = defaultProjects[0];
+    let selectedChatId = null;
+
+    // Data structures
+    let chats = {}; // { projectName: [ { id, title, conversation } ] }
     let projects = [];
-    let isThinking = false;
-    let isDarkMode = localStorage.getItem('theme') === 'dark';
+    let conversation = [];
 
-    const createMessage = (role, text) => ({ role, text, timestamp: new Date().toISOString() });
+    // UI state flags
+    let isThinking = false; // Prevents multiple simultaneous requests
+    let isDarkMode = localStorage.getItem(THEME_KEY) === "dark";
 
-    // Initialize theme
-    function initTheme() {
-      const themeToggle = document.getElementById('themeToggle');
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark-mode');
-        themeToggle.textContent = '☀️';
-      } else {
-        document.documentElement.classList.remove('dark-mode');
-        themeToggle.textContent = '🌙';
-      }
-      themeToggle.addEventListener('click', toggleTheme);
+    /* ====================================================================
+       UTILITY FUNCTIONS
+       ====================================================================
+       Helper functions used throughout the application for common tasks.
+    */
+
+    /**
+     * Creates a new message object with metadata
+     * @param {string} role - Message sender: "user" or "assistant"
+     * @param {string} text - Message content
+     * @returns {object} Message object with role, text, and timestamp
+     */
+    function createMessage(role, text) {
+      return {
+        role,
+        text,
+        timestamp: new Date().toISOString()
+      };
     }
 
-    function toggleTheme() {
-      isDarkMode = !isDarkMode;
-      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-      document.documentElement.classList.toggle('dark-mode');
-      const themeToggle = document.getElementById('themeToggle');
-      themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
-    }
-
-    function renderProjects() {
-      projectList.innerHTML = projects
-        .map((project) => `
-          <div class="project-item${project === selectedProject ? " active" : ""}" data-project="${escapeHtml(project)}">
-            <div class="project-item-wrapper">
-              <span>${project}</span>
-              <button class="delete-project-btn" data-project="${escapeHtml(project)}" title="Delete project">×</button>
-            </div>
-          </div>
-        `)
-        .join("");
-      
-      document.querySelectorAll(".project-item").forEach(item => {
-        item.addEventListener("click", () => {
-          switchProject(item.dataset.project);
-        });
-      });
-
-      document.querySelectorAll(".delete-project-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          deleteProject(btn.dataset.project);
-        });
-      });
-    }
-
-    function renderChats() {
-      const projectChats = chats[selectedProject] || [];
-      chatList.innerHTML = projectChats
-        .map((chat) => `
-          <div class="chat-item${chat.id === selectedChatId ? " active" : ""}" data-chat-id="${chat.id}">
-            <div class="project-item-wrapper">
-              <span>${escapeHtml(chat.title)}</span>
-              <button class="delete-project-btn" data-chat-id="${chat.id}" title="Delete chat">×</button>
-            </div>
-          </div>
-        `)
-        .join("");
-      
-      document.querySelectorAll(".chat-item").forEach(item => {
-        item.addEventListener("click", () => {
-          switchChat(item.dataset.chatId);
-        });
-      });
-
-      document.querySelectorAll(".delete-project-btn[data-chat-id]").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          deleteChat(btn.dataset.chatId);
-        });
-      });
-    }
-
-    function renderConversation() {
-      chatWindow.innerHTML = conversation
-        .map((msg) => {
-          const content = msg.role === "assistant" ? marked.parse(msg.text) : `<div>${escapeHtml(msg.text).replace(/\n/g, "<br />")}</div>`;
-          return `
-            <article class="message ${msg.role}">
-              <div class="message-content">
-                <div class="content">${content}</div>
-              </div>
-            </article>
-          `;
-        })
-        .join("");
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-
+    /**
+     * Escapes HTML special characters to prevent XSS attacks
+     * @param {string} str - String to escape
+     * @returns {string} HTML-safe string
+     */
     function escapeHtml(str) {
       return str
         .replace(/&/g, "&amp;")
@@ -1403,22 +1374,237 @@
         .replace(/'/g, "&#039;");
     }
 
-    function getConversationKey(projectName) {
-      return `${STORAGE_KEY_PREFIX}${projectName}`;
-    }
-
+    /**
+     * Gets the localStorage key for a project's chats
+     * @param {string} projectName - Project identifier
+     * @returns {string} Storage key
+     */
     function getChatsKey(projectName) {
       return `${CHATS_KEY_PREFIX}${projectName}`;
     }
 
+    /**
+     * Sanitizes a string for S3 storage compatibility
+     * Replaces special characters with underscores
+     * @param {string} value - String to sanitize
+     * @returns {string} S3-safe string
+     */
+    function sanitizeForS3(value) {
+      return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9-_\.]/g, "_")
+        .replace(/_+/g, "_");
+    }
+
+    /* ====================================================================
+       THEME MANAGEMENT
+       ====================================================================
+       Handle light/dark mode toggling and persistence. Theme preference
+       is saved to localStorage and applied to the document.
+    */
+
+    /**
+     * Initializes the theme based on user preferences
+     * Sets up the toggle button and applies the saved theme
+     */
+    function initTheme() {
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+        themeToggle.textContent = "☀️";
+        themeToggle.setAttribute("aria-pressed", "true");
+      } else {
+        document.documentElement.classList.remove("dark-mode");
+        themeToggle.textContent = "🌙";
+        themeToggle.setAttribute("aria-pressed", "false");
+      }
+      themeToggle.addEventListener("click", toggleTheme);
+    }
+
+    /**
+     * Toggles between light and dark mode
+     * Persists preference to localStorage for next session
+     */
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      localStorage.setItem(THEME_KEY, isDarkMode ? "dark" : "light");
+      document.documentElement.classList.toggle("dark-mode");
+      themeToggle.textContent = isDarkMode ? "☀️" : "🌙";
+      themeToggle.setAttribute("aria-pressed", isDarkMode);
+    }
+
+    /* ====================================================================
+       RENDERING FUNCTIONS
+       ====================================================================
+       Functions that update the DOM to reflect the current state.
+       These functions build HTML from data and attach event listeners.
+    */
+
+    /**
+     * Renders the project list in the sidebar
+     * Shows all projects with active state highlighting
+     * Attaches event listeners for selection and deletion
+     */
+    function renderProjects() {
+      projectList.innerHTML = projects
+        .map((project) => `
+          <div class="project-item${project === selectedProject ? " active" : ""}"
+               data-project="${escapeHtml(project)}"
+               role="listitem"
+               tabindex="0">
+            <div class="project-item-wrapper">
+              <span>${escapeHtml(project)}</span>
+              <button class="delete-project-btn"
+                      data-project="${escapeHtml(project)}"
+                      title="Delete this project"
+                      aria-label="Delete ${project}">
+                ✕
+              </button>
+            </div>
+          </div>
+        `)
+        .join("");
+
+      // Attach click/keyboard handlers to project items
+      document.querySelectorAll(".project-item").forEach(item => {
+        item.addEventListener("click", () => {
+          switchProject(item.dataset.project);
+        });
+        item.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            switchProject(item.dataset.project);
+          }
+        });
+      });
+
+      // Attach delete handlers
+      document.querySelectorAll(".delete-project-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteProject(btn.dataset.project);
+        });
+      });
+    }
+
+    /**
+     * Renders the chat list for the currently selected project
+     * Shows all conversations within the active project
+     * Highlights the currently selected chat
+     */
+    function renderChats() {
+      const projectChats = chats[selectedProject] || [];
+      chatList.innerHTML = projectChats
+        .map((chat) => `
+          <div class="chat-item${chat.id === selectedChatId ? " active" : ""}"
+               data-chat-id="${chat.id}"
+               role="listitem"
+               tabindex="0">
+            <div class="project-item-wrapper">
+              <span title="${escapeHtml(chat.title)}">${escapeHtml(chat.title)}</span>
+              <button class="delete-project-btn"
+                      data-chat-id="${chat.id}"
+                      title="Delete this chat"
+                      aria-label="Delete chat">
+                ✕
+              </button>
+            </div>
+          </div>
+        `)
+        .join("");
+
+      // Attach click/keyboard handlers to chat items
+      document.querySelectorAll(".chat-item").forEach(item => {
+        item.addEventListener("click", () => {
+          switchChat(item.dataset.chatId);
+        });
+        item.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            switchChat(item.dataset.chatId);
+          }
+        });
+      });
+
+      // Attach delete handlers
+      document.querySelectorAll(".delete-project-btn[data-chat-id]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteChat(btn.dataset.chatId);
+        });
+      });
+    }
+
+    /**
+     * Renders all messages in the current conversation
+     * Formats markdown for AI messages, plain text for user messages
+     * Auto-scrolls to the bottom when new messages arrive
+     */
+    function renderConversation() {
+      chatWindow.innerHTML = conversation
+        .map((msg) => {
+          // Parse markdown for AI messages, escape and format user messages
+          const content = msg.role === "assistant"
+            ? marked.parse(msg.text)
+            : `<div>${escapeHtml(msg.text).replace(/\n/g, "<br />")}</div>`;
+
+          return `
+            <article class="message ${msg.role}">
+              <div class="message-content">
+                <div class="content">${content}</div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+
+      // Auto-scroll to the bottom to show newest messages
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    /* ====================================================================
+       STATE MANAGEMENT & PERSISTENCE
+       ====================================================================
+       Functions for saving and loading application state from localStorage.
+       This ensures user conversations and preferences persist across sessions.
+    */
+
+    /**
+     * Saves the currently selected project to localStorage
+     */
     function saveSelectedProject() {
       localStorage.setItem(SELECTED_PROJECT_KEY, selectedProject);
     }
 
+    /**
+     * Saves the currently selected chat ID to localStorage
+     */
     function saveSelectedChat() {
       localStorage.setItem(SELECTED_CHAT_KEY, selectedChatId);
     }
 
+    /**
+     * Saves the list of all projects to localStorage
+     */
+    function saveProjects() {
+      localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+    }
+
+    /**
+     * Saves all chats for the current project to localStorage
+     */
+    function saveChats() {
+      if (!selectedProject) return;
+      localStorage.setItem(
+        getChatsKey(selectedProject),
+        JSON.stringify(chats[selectedProject] || [])
+      );
+    }
+
+    /**
+     * Saves the current conversation to the selected chat
+     * Updates both in-memory state and localStorage
+     */
     function saveConversation() {
       if (!selectedProject || !selectedChatId) return;
       const projectChats = chats[selectedProject] || [];
@@ -1429,62 +1615,10 @@
       }
     }
 
-    function saveChats() {
-      if (!selectedProject) return;
-      localStorage.setItem(getChatsKey(selectedProject), JSON.stringify(chats[selectedProject] || []));
-    }
-
-    function sanitizeForS3(value) {
-      return value
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9-_\.]/g, "_")
-        .replace(/_+/g, "_");
-    }
-
-    async function saveChatToS3(projectName, conversationData) {
-      if (!projectName || !conversationData || conversationData.length === 0) {
-        return false;
-      }
-
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const safeProject = sanitizeForS3(projectName);
-      const fileName = `chat_${safeProject}_${timestamp}.json`;
-      const payload = {
-        projectName,
-        savedAt: new Date().toISOString(),
-        conversation: conversationData
-      };
-
-      try {
-        const response = await fetch(PRESIGN_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectName, fileName })
-        });
-
-        if (!response.ok) {
-          throw new Error(`Presign request failed (${response.status})`);
-        }
-
-        const { uploadUrl, objectKey } = await response.json();
-        const uploadResponse = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error(`S3 upload failed (${uploadResponse.status})`);
-        }
-
-        return true;
-      } catch (error) {
-        console.warn("S3 save failed:", error);
-        return false;
-      }
-    }
-
+    /**
+     * Loads all chats for the current project from localStorage
+     * Initializes with empty array if no data exists
+     */
     function loadChats() {
       if (!selectedProject) return;
       const stored = localStorage.getItem(getChatsKey(selectedProject));
@@ -1492,6 +1626,7 @@
         try {
           chats[selectedProject] = JSON.parse(stored);
         } catch (error) {
+          console.error("Error loading chats:", error);
           chats[selectedProject] = [];
         }
       } else {
@@ -1499,36 +1634,195 @@
       }
     }
 
+    /**
+     * Loads the conversation for the currently selected chat
+     * Initializes with welcome message if no conversation exists
+     */
     function loadCurrentChat() {
       if (!selectedProject || !selectedChatId) {
-        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
+        conversation = [
+          createMessage(
+            "assistant",
+            "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA systems, power studies, or engineering reports."
+          )
+        ];
         return;
       }
+
       const projectChats = chats[selectedProject] || [];
       const chat = projectChats.find(c => c.id === selectedChatId);
-      if (chat) {
-        conversation = chat.conversation || [];
+
+      if (chat && chat.conversation && chat.conversation.length > 0) {
+        conversation = chat.conversation;
       } else {
-        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
-      }
-      if (!conversation || conversation.length === 0) {
-        conversation = [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")];
+        conversation = [
+          createMessage(
+            "assistant",
+            "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA systems, power studies, or engineering reports."
+          )
+        ];
       }
     }
 
+    /**
+     * Loads the entire application session from localStorage
+     * Restores projects, selected project, chats, and selected chat
+     * This is the main initialization function
+     */
+    function loadSession() {
+      // Load the list of projects
+      const storedProjects = localStorage.getItem(PROJECTS_KEY);
+      if (storedProjects) {
+        try {
+          projects = JSON.parse(storedProjects);
+        } catch (error) {
+          console.error("Error loading projects:", error);
+          projects = [...defaultProjects];
+        }
+      } else {
+        projects = [...defaultProjects];
+      }
+
+      // Load and restore the selected project
+      const storedSelectedProject = localStorage.getItem(SELECTED_PROJECT_KEY);
+      if (storedSelectedProject && projects.includes(storedSelectedProject)) {
+        selectedProject = storedSelectedProject;
+      } else if (projects.length > 0) {
+        selectedProject = projects[0];
+      }
+
+      // Load chats for the project
+      loadChats();
+
+      // Load and restore the selected chat
+      const projectChats = chats[selectedProject] || [];
+      const storedSelectedChat = localStorage.getItem(SELECTED_CHAT_KEY);
+
+      if (storedSelectedChat && projectChats.some(c => c.id === storedSelectedChat)) {
+        selectedChatId = storedSelectedChat;
+      } else if (projectChats.length > 0) {
+        selectedChatId = projectChats[0].id;
+      } else {
+        selectedChatId = null;
+      }
+
+      // Load the conversation for the selected chat
+      loadCurrentChat();
+      currentProjectTitle.textContent = selectedProject;
+
+      // Render all UI components
+      renderConversation();
+      renderProjects();
+      renderChats();
+    }
+
+    /* ====================================================================
+       USER INTERFACE UPDATES
+       ====================================================================
+       Functions for updating UI elements and providing feedback to users.
+    */
+
+    /**
+     * Updates the status line with user feedback messages
+     * Supports different status types for different visual styling
+     * @param {string} text - Status message to display
+     * @param {string} type - Message type: 'default', 'error', 'success', or 'info'
+     */
+    function updateStatus(text, type = "default") {
+      statusLine.textContent = text;
+      statusLine.className = "status-line";
+      if (type !== "default") {
+        statusLine.classList.add(type);
+      }
+    }
+
+    /* ====================================================================
+       PROJECT MANAGEMENT
+       ====================================================================
+       Functions for creating, switching, and deleting projects.
+       A project is a category for organizing conversations.
+    */
+
+    /**
+     * Opens the project creation modal dialog
+     * Clears previous input and focuses the text field
+     */
+    function openProjectModal() {
+      projectModal.classList.add("active");
+      projectNameInput.value = "";
+      projectNameInput.focus();
+    }
+
+    /**
+     * Closes the project creation modal dialog
+     */
+    function closeProjectModal() {
+      projectModal.classList.remove("active");
+    }
+
+    /**
+     * Creates a new project with validation
+     * @param {string} projectName - Name for the new project
+     */
+    function createProject(projectName) {
+      const trimmedName = projectName.trim();
+
+      // Validation: name required
+      if (!trimmedName) {
+        alert("Please enter a project name.");
+        return;
+      }
+
+      // Validation: max length
+      if (trimmedName.length > 100) {
+        alert("Project name must be 100 characters or less.");
+        return;
+      }
+
+      // Validation: no duplicates
+      if (projects.includes(trimmedName)) {
+        alert("A project with this name already exists.");
+        projectNameInput.focus();
+        return;
+      }
+
+      // Create project
+      projects.push(trimmedName);
+      chats[trimmedName] = [];
+      saveProjects();
+
+      // Switch to new project and close modal
+      switchProject(trimmedName);
+      closeProjectModal();
+      updateStatus(`Project "${trimmedName}" created successfully`, "success");
+    }
+
+    /**
+     * Switches to a different project
+     * Loads all chats for that project and updates UI
+     * @param {string} projectName - Project to switch to
+     */
     function switchProject(projectName) {
       if (!projectName || selectedProject === projectName) return;
+
       selectedProject = projectName;
       saveSelectedProject();
       loadChats();
+
       const projectChats = chats[selectedProject] || [];
+
+      // Create default chat if project is empty
       if (projectChats.length === 0) {
-        // Create a default chat for new projects
         const chatId = Date.now().toString();
         const defaultChat = {
           id: chatId,
           title: "Welcome",
-          conversation: [createMessage("assistant", "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA, power studies, or engineering reports.")]
+          conversation: [
+            createMessage(
+              "assistant",
+              "Hello! I'm NorthernAmpAI. Ask me about transformer sizing, protection design, SCADA systems, power studies, or engineering reports."
+            )
+          ]
         };
         chats[selectedProject] = [defaultChat];
         saveChats();
@@ -1538,223 +1832,173 @@
       } else {
         selectedChatId = null;
       }
+
       saveSelectedChat();
       loadCurrentChat();
       currentProjectTitle.textContent = selectedProject;
+
+      // Update UI
       renderProjects();
       renderChats();
       renderConversation();
-      updateStatus(`Switched to project: ${selectedProject}`);
+      updateStatus(`Switched to project: ${selectedProject}`, "info");
     }
 
+    /**
+     * Deletes a project and all its associated chats
+     * Prevents deletion of the last project
+     * @param {string} projectName - Project to delete
+     */
+    function deleteProject(projectName) {
+      // Prevent deleting the last project
+      if (projects.length === 1) {
+        alert("You must keep at least one project.");
+        return;
+      }
+
+      // Confirm deletion
+      if (!confirm(`Delete "${projectName}" and all its conversations? This cannot be undone.`)) {
+        return;
+      }
+
+      // Delete project
+      projects = projects.filter(p => p !== projectName);
+      delete chats[projectName];
+      localStorage.removeItem(getChatsKey(projectName));
+
+      // Switch to another project if needed
+      if (selectedProject === projectName) {
+        selectedProject = projects[0];
+        saveSelectedProject();
+        loadChats();
+        const projectChats = chats[selectedProject] || [];
+        selectedChatId = projectChats.length > 0 ? projectChats[0].id : null;
+        saveSelectedChat();
+        loadCurrentChat();
+        currentProjectTitle.textContent = selectedProject;
+      }
+
+      saveProjects();
+
+      // Update UI
+      renderProjects();
+      renderChats();
+      renderConversation();
+      updateStatus(`Project deleted successfully`, "success");
+    }
+
+    /* ====================================================================
+       CHAT MANAGEMENT
+       ====================================================================
+       Functions for creating, switching, and deleting chats (conversations).
+    */
+
+    /**
+     * Creates a new chat (conversation) in the selected project
+     */
+    function createChat() {
+      if (!selectedProject) return;
+
+      const chatId = Date.now().toString();
+      const newChat = {
+        id: chatId,
+        title: "New Chat",
+        conversation: [
+          createMessage("assistant", "New conversation started. How can I help you with your engineering project?")
+        ]
+      };
+
+      if (!chats[selectedProject]) {
+        chats[selectedProject] = [];
+      }
+
+      chats[selectedProject].push(newChat);
+      saveChats();
+      switchChat(chatId);
+      updateStatus("New conversation created", "success");
+    }
+
+    /**
+     * Switches to a different chat within the current project
+     * @param {string} chatId - Chat ID to switch to
+     */
     function switchChat(chatId) {
       if (!chatId || selectedChatId === chatId) return;
+
       selectedChatId = chatId;
       saveSelectedChat();
       loadCurrentChat();
       renderChats();
       renderConversation();
-      updateStatus(`Switched to chat: ${chats[selectedProject].find(c => c.id === chatId).title}`);
-    }
 
-    function loadSession() {
-      const storedProjects = localStorage.getItem(PROJECTS_KEY);
-      const storedSelectedProject = localStorage.getItem(SELECTED_PROJECT_KEY);
-      const storedSelectedChat = localStorage.getItem(SELECTED_CHAT_KEY);
-
-      if (storedProjects) {
-        try {
-          projects = JSON.parse(storedProjects);
-        } catch (error) {
-          projects = [...defaultProjects];
-        }
-      } else {
-        projects = [...defaultProjects];
-      }
-
-      if (storedSelectedProject && projects.includes(storedSelectedProject)) {
-        selectedProject = storedSelectedProject;
-      } else if (projects.length > 0) {
-        selectedProject = projects[0];
-      }
-
-      loadChats();
-      const projectChats = chats[selectedProject] || [];
-      if (storedSelectedChat && projectChats.some(c => c.id === storedSelectedChat)) {
-        selectedChatId = storedSelectedChat;
-      } else if (projectChats.length > 0) {
-        selectedChatId = projectChats[0].id;
-      } else {
-        selectedChatId = null;
-      }
-
-      loadCurrentChat();
-      currentProjectTitle.textContent = selectedProject;
-
-      renderConversation();
-      renderProjects();
-      renderChats();
-    }
-
-    function updateStatus(text) {
-      statusLine.textContent = text;
-    }
-
-    function openProjectModal() {
-      projectModal.classList.add("active");
-      projectNameInput.value = "";
-      projectNameInput.focus();
-    }
-
-    function closeProjectModal() {
-      projectModal.classList.remove("active");
-    }
-
-    function createProject(projectName) {
-      const trimmedName = projectName.trim();
-      if (!trimmedName) {
-        alert("Please enter a project name.");
-        return;
-      }
-      
-      if (projects.includes(trimmedName)) {
-        alert("A project with this name already exists.");
-        projectNameInput.focus();
-        return;
-      }
-      
-      projects.push(trimmedName);
-      chats[trimmedName] = [];
-      saveProjects();
-      switchProject(trimmedName);
-      closeProjectModal();
-    }
-
-    function deleteProject(projectName) {
-      if (projects.length === 1) {
-        alert("At least one project must remain.");
-        return;
-      }
-
-      if (confirm(`Are you sure you want to delete "${projectName}"? This will delete all chats in the project.`)) {
-        projects = projects.filter(p => p !== projectName);
-        delete chats[projectName];
-        localStorage.removeItem(getChatsKey(projectName));
-        if (selectedProject === projectName) {
-          selectedProject = projects[0];
-          saveSelectedProject();
-          loadChats();
-          const projectChats = chats[selectedProject] || [];
-          selectedChatId = projectChats.length > 0 ? projectChats[0].id : null;
-          saveSelectedChat();
-          loadCurrentChat();
-          currentProjectTitle.textContent = selectedProject;
-        }
-        saveProjects();
-        renderProjects();
-        renderChats();
-        renderConversation();
+      const chat = chats[selectedProject]?.find(c => c.id === chatId);
+      if (chat) {
+        updateStatus(`Switched to: ${chat.title}`, "info");
       }
     }
 
-    function createChat() {
-      if (!selectedProject) return;
-      const chatId = Date.now().toString();
-      const newChat = {
-        id: chatId,
-        title: "New Chat",
-        conversation: [createMessage("assistant", "New chat started. How can NorthernAmpAI support your engineering task?")]
-      };
-      if (!chats[selectedProject]) chats[selectedProject] = [];
-      chats[selectedProject].push(newChat);
-      saveChats();
-      switchChat(chatId);
-    }
-
+    /**
+     * Deletes a chat from the current project
+     * Prevents deletion of the last chat
+     * @param {string} chatId - Chat ID to delete
+     */
     function deleteChat(chatId) {
       if (!selectedProject || !chatId) return;
+
       const projectChats = chats[selectedProject] || [];
+
+      // Prevent deleting the last chat
       if (projectChats.length === 1) {
-        alert("At least one chat must remain in the project.");
+        alert("You must keep at least one conversation in the project.");
         return;
       }
-      if (confirm("Are you sure you want to delete this chat?")) {
-        chats[selectedProject] = projectChats.filter(c => c.id !== chatId);
-        if (selectedChatId === chatId) {
-          const remaining = chats[selectedProject];
-          selectedChatId = remaining.length > 0 ? remaining[0].id : null;
-          saveSelectedChat();
-          loadCurrentChat();
-        }
-        saveChats();
-        renderChats();
-        renderConversation();
+
+      if (!confirm("Delete this conversation? This cannot be undone.")) {
+        return;
       }
+
+      // Delete chat
+      chats[selectedProject] = projectChats.filter(c => c.id !== chatId);
+
+      // Switch to another chat if needed
+      if (selectedChatId === chatId) {
+        const remaining = chats[selectedProject];
+        selectedChatId = remaining.length > 0 ? remaining[0].id : null;
+        saveSelectedChat();
+        loadCurrentChat();
+      }
+
+      saveChats();
+
+      // Update UI
+      renderChats();
+      renderConversation();
+      updateStatus("Conversation deleted", "success");
     }
 
-    async function sendQuestion() {
-      if (isThinking) return;
-      const question = promptInput.value.trim();
-      if (!question) return;
+    /* ====================================================================
+       MESSAGE MANAGEMENT
+       ====================================================================
+       Functions for manipulating messages in the current conversation.
+    */
 
-      isThinking = true;
-      promptInput.value = "";
-      updateStatus("Sending question...");
-      appendMessage("user", question);
-      appendMessage("assistant", "Thinking...");
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ question })
-        });
-
-        const payload = await response.json();
-        let body = payload;
-        if (payload.body) {
-          try {
-            body = JSON.parse(payload.body);
-          } catch (_) {
-            body = payload.body;
-          }
-        }
-
-        const answer = body.answer || body.message || "No answer returned from the API.";
-        replaceLastAssistantMessage(answer);
-        saveConversation();
-        const savedToS3 = await saveChatToS3(selectedProject, conversation);
-        // Update chat title if it's the first user message
-        if (selectedProject && selectedChatId) {
-          const projectChats = chats[selectedProject] || [];
-          const chat = projectChats.find(c => c.id === selectedChatId);
-          if (chat && chat.title === "New Chat") {
-            chat.title = question.length > 50 ? question.substring(0, 50) + "..." : question;
-            saveChats();
-            renderChats();
-          }
-        }
-        if (savedToS3) {
-          updateStatus("Answer received and chat saved to S3. Press Enter to ask the next question.");
-        } else {
-          updateStatus("Answer received. Chat saved locally; S3 upload failed.");
-        }
-      } catch (error) {
-        replaceLastAssistantMessage(`Error: ${error.message}`);
-        updateStatus("Unable to connect to the API. Check your network or endpoint.");
-      } finally {
-        isThinking = false;
-      }
-    }
-
+    /**
+     * Appends a new message to the conversation
+     * Automatically saves to localStorage
+     * @param {string} role - "user" or "assistant"
+     * @param {string} text - Message content
+     */
     function appendMessage(role, text) {
       conversation.push(createMessage(role, text));
       saveConversation();
       renderConversation();
     }
 
+    /**
+     * Replaces the last assistant message in the conversation
+     * Used to update the "Thinking..." placeholder with actual response
+     * @param {string} text - New message text
+     */
     function replaceLastAssistantMessage(text) {
       for (let i = conversation.length - 1; i >= 0; i--) {
         if (conversation[i].role === "assistant") {
@@ -1766,18 +2010,115 @@
       saveConversation();
     }
 
-    function startNewChat() {
-      createChat();
+    /* ====================================================================
+       API COMMUNICATION
+       ====================================================================
+       Functions for communicating with the backend AI service.
+    */
+
+    /**
+     * Sends a question to the AI backend and handles the response
+     * Manages loading states, error handling, and UI updates
+     */
+    async function sendQuestion() {
+      // Prevent multiple simultaneous requests
+      if (isThinking) return;
+
+      const question = promptInput.value.trim();
+      if (!question) return;
+
+      // Update UI state
+      isThinking = true;
+      promptInput.value = "";
+      sendBtn.disabled = true;
+      updateStatus("Sending...");
+
+      // Add messages to conversation
+      appendMessage("user", question);
+      appendMessage("assistant", "⏳ Thinking...");
+
+      try {
+        // Send question to API
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question })
+        });
+
+        // Parse response
+        const payload = await response.json();
+        let body = payload;
+
+        if (payload.body) {
+          try {
+            body = JSON.parse(payload.body);
+          } catch (_) {
+            body = payload.body;
+          }
+        }
+
+        // Extract and display answer
+        const answer = body.answer || body.message || "No response from the API.";
+        replaceLastAssistantMessage(answer);
+        saveConversation();
+
+        // Update chat title based on user's first question
+        if (selectedProject && selectedChatId) {
+          const projectChats = chats[selectedProject] || [];
+          const chat = projectChats.find(c => c.id === selectedChatId);
+          if (chat && chat.title === "New Chat") {
+            chat.title = question.length > 50 ? question.substring(0, 50) + "..." : question;
+            saveChats();
+            renderChats();
+          }
+        }
+
+        updateStatus("Response received ✓", "success");
+      } catch (error) {
+        console.error("API Error:", error);
+        replaceLastAssistantMessage(
+          `❌ Error: ${error.message}\n\nPlease check your connection and try again.`
+        );
+        updateStatus("Failed to get response", "error");
+      } finally {
+        // Reset UI state
+        isThinking = false;
+        sendBtn.disabled = false;
+        promptInput.focus();
+      }
     }
 
-    // Event listeners
+    /* ====================================================================
+       EVENT LISTENERS
+       ====================================================================
+       Attach event listeners to UI elements for user interactions.
+    */
+
+    // Send button click
     sendBtn.addEventListener("click", sendQuestion);
-    newChatBtn.addEventListener("click", startNewChat);
+
+    // Textarea keyboard events
+    promptInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendQuestion();
+      }
+    });
+
+    // New chat button
+    newChatBtn.addEventListener("click", createChat);
+
+    // Project management buttons
     createProjectBtn.addEventListener("click", openProjectModal);
     createChatBtn.addEventListener("click", createChat);
+
+    // Modal buttons
     confirmBtn.addEventListener("click", () => createProject(projectNameInput.value));
     cancelBtn.addEventListener("click", closeProjectModal);
 
+    // Modal input keyboard events
     projectNameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         createProject(projectNameInput.value);
@@ -1786,9 +2127,23 @@
       }
     });
 
-    promptInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
+    // Modal backdrop click
+    projectModal.addEventListener("click", (e) => {
+      if (e.target === projectModal) {
+        closeProjectModal();
+      }
+    });
+
+    /* ====================================================================
+       INITIALIZATION
+       ====================================================================
+       Initialize the application when the page loads.
+    */
+
+    // Load saved session and initialize UI
+    loadSession();
+    initTheme();
+    updateStatus("Ready to assist", "info"preventDefault();
         sendQuestion();
       }
     });
