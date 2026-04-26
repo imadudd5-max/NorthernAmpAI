@@ -1,1 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NorthernAmpAI Chat</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #f7f8fb;
+      color: #111827;
+    }
 
+    h1 {
+      margin-top: 0;
+    }
+
+    .chat-container {
+      border: 1px solid #d1d5db;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 18px;
+      min-height: 320px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      overflow-y: auto;
+    }
+
+    #chat {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      padding: 14px 18px;
+      border-radius: 16px;
+      max-width: 82%;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #eff6ff;
+      color: #0f172a;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .message .label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #334155;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 1rem;
+      resize: vertical;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    button.secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .meta {
+      margin-top: 14px;
+      font-size: 0.94rem;
+      color: #475569;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>NorthernAmpAI Chat</h1>
+  <p>Ask an electrical engineering question and keep the conversation in a session history.</p>
+
+  <div class="chat-container">
+    <div id="chat"></div>
+  </div>
+
+  <div class="controls">
+    <textarea id="question" placeholder="Type your question here...">What size transformer do I need for 25 MW?</textarea>
+    <div class="button-row">
+      <button class="primary" onclick="sendMessage()">Send</button>
+      <button class="secondary" onclick="clearSession()">Clear chat</button>
+    </div>
+  </div>
+
+  <p class="meta">Chat history is stored locally in your browser for this device.</p>
+
+  <script>
+    const API_URL = "https://oh4xf4eo5i.execute-api.us-east-1.amazonaws.com/prod/NorthernAmpAI";
+    const STORAGE_KEY = "NorthernAmpAI_chat_history";
+    let messages = [];
+
+    function createMessage(role, content) {
+      return { role, content, timestamp: new Date().toISOString() };
+    }
+
+    function renderChat() {
+      const chat = document.getElementById("chat");
+      chat.innerHTML = "";
+      messages.forEach(msg => {
+        const bubble = document.createElement("div");
+        bubble.className = `message ${msg.role}`;
+
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = msg.role === "user" ? "You" : "Assistant";
+
+        const content = document.createElement("div");
+        if (msg.role === "assistant") {
+          content.innerHTML = marked.parse(msg.content || "");
+        } else {
+          content.textContent = msg.content || "";
+        }
+
+        bubble.appendChild(label);
+        bubble.appendChild(content);
+        chat.appendChild(bubble);
+      });
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function saveSession() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    }
+
+    function loadSession() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            messages = parsed;
+          }
+        } catch (error) {
+          console.warn("Unable to restore chat history:", error);
+        }
+      }
+      if (messages.length === 0) {
+        messages = [createMessage("assistant", "Welcome! Ask me anything about electrical engineering.")];
+      }
+      renderChat();
+    }
+
+    function appendMessage(role, content) {
+      messages.push(createMessage(role, content));
+      saveSession();
+      renderChat();
+    }
+
+    async function sendMessage() {
+      const textarea = document.getElementById("question");
+      const question = textarea.value.trim();
+      if (!question) {
+        return;
+      }
+
+      appendMessage("user", question);
+      textarea.value = "";
+      appendMessage("assistant", "Thinking...");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+        let body = data;
+        if (data.body) {
+          body = JSON.parse(data.body);
+        }
+
+        const answer = body.answer || body.message || body.error || JSON.stringify(body, null, 2);
+        messages.pop();
+        appendMessage("assistant", answer);
+      } catch (error) {
+        messages.pop();
+        appendMessage("assistant", "Frontend error: " + error.message);
+      }
+    }
+
+    function clearSession() {
+      localStorage.removeItem(STORAGE_KEY);
+      messages = [createMessage("assistant", "Chat cleared. Ask another question to start a new session.")];
+      renderChat();
+    }
+
+    loadSession();
+  </script>
+</body>
+</html>
